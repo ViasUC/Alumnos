@@ -1,1 +1,19 @@
-<p>layout works!</p>
+<header class="appbar">
+  <div class="left-space">
+    <div class="logo">
+      <img src="assets/logo.png" alt="Logo" />
+    </div>
+  </div>
+
+  <div class="menu-container">
+    <button *ngFor="let item of menuItems">{{ item }}</button>
+  </div>
+
+  <div class="right-space">
+    <div class="mode-toggle" (click)="toggleMode()">
+      {{ modeAscii }}
+    </div>
+  </div>
+</header>
+
+<main class="container"></main>

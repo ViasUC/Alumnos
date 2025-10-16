@@ -1,0 +1,85 @@
+.appbar {
+  display: flex;
+  align-items: center;
+  height: 60px;
+  padding: 0 16px;
+  background-color: var(--color-bg-dark);
+  transition: background-color 0.5s ease;
+}
+
+/* Contenedores flexibles */
+.appbar .left-space,
+.appbar .right-space {
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+.appbar .right-space {
+  justify-content: flex-end;
+  /* toggle siempre a la derecha */
+}
+
+.appbar .logo img {
+  height: 40px;
+}
+
+.appbar .menu-container {
+  display: flex;
+  justify-content: center;
+  flex: 2;
+  gap: 16px;
+  transition: all 0.5s ease;
+  /* transición suave al cambiar tamaño */
+}
+
+.appbar .menu-container button {
+  min-width: 120px;
+  /* ancho mínimo constante */
+  transition: all 0.5s ease;
+}
+
+.mode-toggle {
+  cursor: pointer;
+  font-weight: bold;
+  padding: 4px 8px;
+  border-radius: 4px;
+  max-width: 80px;
+  transition: background-color 0.5s ease, color 0.5s ease;
+}
+
+.mode-toggle:hover {
+  background-color: var(--color-accent-dark);
+  color: var(--color-light-dark);
+}
+
+/* Light mode */
+body.light-mode .appbar {
+  background-color: var(--color-bg-light);
+}
+
+body.light-mode .mode-toggle:hover {
+  background-color: var(--color-accent-light);
+  color: var(--color-light-light);
+}
+
+/* Responsive suave al achicar pantalla */
+@media (max-width: 1200px) {
+  .appbar {
+    padding: 0 12px;
+  }
+
+  .appbar .menu-container button {
+    min-width: 100px;
+  }
+}
+
+@media (max-width: 992px) {
+  .appbar {
+    padding: 0 8px;
+  }
+
+  .appbar .menu-container button {
+    min-width: 80px;
+  }
+}
