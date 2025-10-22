@@ -1,0 +1,38 @@
+.card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--color-bg-dark);
+  color: var(--text-light);
+  padding: 12px;
+  border-radius: 10px;
+  border-left: 4px solid #52b69a;
+  /* verde */
+  transition: transform 0.2s;
+  padding: 10px;
+  gap: 12px;
+}
+
+.card:hover {
+  transform: scale(1.01);
+}
+
+.download {
+  background-color: #52b69a;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 6px 10px;
+  cursor: pointer;
+}
+
+body.light-mode .card {
+  background-color: #caf0f8;
+  color: #023e8a;
+  border-left-color: #7b2cbf;
+  /* violeta */
+}
+
+body.light-mode .download {
+  background-color: #7b2cbf;
+}

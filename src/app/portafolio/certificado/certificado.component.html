@@ -1,0 +1,42 @@
+<div class="card" *ngIf="data">
+  <!-- Título principal -->
+  <div class="card-header">
+    <h3 class="card-title">{{ data.nombreEvento || data.nombreEvento }}</h3>
+    <span class="card-type">{{ data.tipo | titlecase }}</span>
+  </div>
+
+  <!-- Info principal: horas a la izquierda, fecha a la derecha -->
+  <div class="card-info">
+    <div class="info-item">
+      <span class="label">Horas:</span>
+      <span class="value">{{ data.horas }} h</span>
+    </div>
+    <div class="info-item">
+      <span class="label">Fecha:</span>
+      <span class="value">{{ data.fecha }}</span>
+    </div>
+  </div>
+
+  <!-- Info secundaria: carrera, áreas y lugar -->
+  <div class="card-details">
+    <div class="detail-item">
+      <span class="label">Carrera:</span>
+      <span class="value">{{ data.carrera }}</span>
+    </div>
+    <div class="detail-item">
+      <span class="label">Áreas:</span>
+      <span class="value">{{ data.areas.join(", ") }}</span>
+    </div>
+    <div class="detail-item" *ngIf="data.lugar">
+      <span class="label">Lugar:</span>
+      <span class="value">{{ data.lugar }}</span>
+    </div>
+    <div class="detail-item">
+      <span class="label">Origen:</span>
+      <span class="value">{{ data.origen }}</span>
+    </div>
+  </div>
+
+  <!-- Botón de descarga -->
+  <button class="download">Descargar</button>
+</div>

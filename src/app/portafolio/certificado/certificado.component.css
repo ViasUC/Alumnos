@@ -1,0 +1,111 @@
+.card {
+  background-color: var(--color-bg-dark);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  transition: transform 0.3s, background 0.3s;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+body.light-mode .card {
+  background-color: #ffffff;
+  color: #023e8a;
+}
+
+/* Header con nombre y tipo */
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.card-title {
+  font-size: 1.25rem;
+  font-weight: bold;
+}
+
+.card-type {
+  background-color: #48cae4;
+  color: #023e8a;
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 6px;
+}
+
+/* Info principal (horas y fecha) */
+.card-info {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.info-item {
+  display: flex;
+  gap: 4px;
+}
+
+.label {
+  font-weight: 600;
+  color: #90e0ef;
+}
+
+.value {
+  color: inherit;
+}
+
+/* Info secundaria: carrera, áreas, lugar y origen */
+.card-details {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.detail-item {
+  display: flex;
+  gap: 6px;
+}
+
+/* Botón de descarga */
+.download {
+  align-self: flex-start;
+  background-color: var(--color-accent-dark);
+  color: var(--text-light);
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+body.light-mode .download {
+  background-color: #48cae4;
+  color: #023e8a;
+}
+
+.download:hover {
+  background-color: #0096c7;
+  color: #ffffff;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .card-info {
+    flex-direction: column;
+  }
+
+  .card-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+}

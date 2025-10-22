@@ -1,0 +1,12 @@
+<div class="card" *ngIf="data">
+  <div class="info">
+    <h3>{{ data.nombre }}</h3>
+    <p>{{ data.fecha }} — {{ data.horas }} horas</p>
+    <p>
+      <b>{{ data.tipo }}</b> · {{ data.carrera }}
+    </p>
+    <p>Áreas: {{ data.areas.join(", ") }}</p>
+    <small>{{ data.origen }}</small>
+  </div>
+  <button class="download">Descargar</button>
+</div>
