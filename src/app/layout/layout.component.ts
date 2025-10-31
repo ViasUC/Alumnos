@@ -7,26 +7,25 @@ import { RouterModule } from '@angular/router';
   standalone: true,
   imports: [NgFor, RouterModule],
   templateUrl: './layout.component.html',
-  styleUrls: ['./layout.component.css'], // corregido
+  styleUrls: ['./layout.component.css'],
 })
 export class LayoutComponent {
-  menuItems = ['Portafolio', 'Oportunidades', 'Perfil', 'Convenios'];
+  // Mapeo label -> path
+  menu = [
+    { label: 'Portafolio', path: '/portafolio' },
+    { label: 'Oportunidades', path: '/oportunidades' },
+    { label: 'Perfil', path: '/perfil' },
+    { label: 'Convenios', path: '/convenios' },
+  ];
 
-  isDarkMode = true; // modo inicial
+  isDarkMode = true;
 
   toggleMode() {
     this.isDarkMode = !this.isDarkMode;
-    if (this.isDarkMode) {
-      document.body.classList.add('dark-mode');
-      document.body.classList.remove('light-mode');
-    } else {
-      document.body.classList.add('light-mode');
-      document.body.classList.remove('dark-mode');
-    }
+    document.body.classList.toggle('light-mode', !this.isDarkMode);
   }
 
-  // ASCII simple para mostrar día/noche
   get modeAscii(): string {
-    return this.isDarkMode ? '☾ Noche' : '☀︎ Día';
+    return this.isDarkMode ? '🌙' : '☀️';
   }
 }

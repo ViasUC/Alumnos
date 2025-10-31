@@ -3,10 +3,10 @@
 /* Dark mode palette */
 :root {
   --color-bg-dark: #03045e;
-  --color-secondary-dark: #023e8a;
+  --color-secondary-dark: #1d4983;
   --color-accent-dark: #0096c7;
   --color-light-dark: #caf0f8;
-  --color-extra1-dark: #48cae4;
+  --color-extra1-dark: #48e4b5;
   --color-extra2-dark: #52b69a;
   --color-extra3-dark: #184e77;
 
@@ -17,21 +17,70 @@
   --color-extra1-light: #90e0ef;
   --color-extra2-light: #52b69a;
   --color-extra3-light: #007f5f;
+  --text-light: #caf0f8;
+  /* texto sobre fondos oscuros */
+  --text-dark: #023e8a;
+  /* texto sobre fondos claros */
+  /* Botones (modo oscuro) */
+  --btn-bg: var(--color-accent-dark);
+  --btn-fg: #ffffff;
+  --btn-hover-bg: #0096c7;
+  --btn-border: transparent;
 }
 
-/* Estilos base globales */
+:root,
+body.dark-mode {
+  /* Fondo general de la app */
+  --bg: #0f172a;
+  /* gris-azulado muy oscuro */
+  --fg: #e5e7eb;
+  /* texto claro */
+  --accent: var(--color-accent-dark);
+  --accent-weak: var(--color-extra1-dark);
+  --accent-strong: var(--color-extra2-dark);
+  /* Superficies (cards, filas, chips) */
+  --surface: #111827;
+  /* card */
+  --surface-2: #0b1220;
+  /* filas/tiles dentro del card */
+  --border: rgba(255, 255, 255, .08);
+  --muted-bg: rgba(255, 255, 255, .06);
+  /* chips suaves */
+}
+
+/* === Rebinding para LIGHT === */
+body.light-mode {
+  /* Reenlaza TODOS los alias al set claro */
+  --bg: #f3f4f6;
+  /* gris 100 como fondo de página */
+  --fg: #111827;
+  /* texto oscuro */
+
+  --surface: #ffffff;
+  /* card blanco */
+  --surface-2: #f7f7fb;
+  /* filas/tiles gris muy claro */
+  --border: rgba(0, 0, 0, .08);
+  --muted-bg: rgba(0, 0, 0, .04);
+  --accent: var(--color-accent-light);
+  --accent-weak: var(--color-extra1-light);
+  --accent-strong: var(--color-extra2-light);
+
+  /* (ya tenías estos tokens de botón) */
+  --btn-bg: var(--color-accent-light);
+  --btn-fg: var(--text-dark);
+  --btn-hover-bg: #48cae4;
+  --btn-border: transparent;
+}
+
+/* Usa SIEMPRE los alias para la base */
 body {
-  background-color: var(--color-bg-dark);
-  color: var(--color-light-dark);
+  background-color: var(--bg);
+  color: var(--fg);
   font-family: 'Roboto', sans-serif;
   margin: 0;
   padding: 0;
-  transition: background-color 0.5s ease, color 0.5s ease;
-}
-
-body.light-mode {
-  background-color: var(--color-bg-light);
-  color: var(--color-light-light);
+  transition: background-color .5s ease, color .5s ease;
 }
 
 a {
@@ -67,4 +116,72 @@ body.light-mode button:hover {
 a,
 button {
   transition: background-color 0.5s ease, color 0.5s ease;
+}
+
+body.light-mode {
+  --btn-bg: var(--color-accent-light);
+  --btn-fg: var(--text-dark);
+  --btn-hover-bg: #48cae4;
+  /* puedes oscurecer si querés más contraste */
+  --btn-border: transparent;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--btn-border);
+  background-color: var(--btn-bg);
+  color: var(--btn-fg);
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color .2s ease, box-shadow .2s ease, transform .02s;
+  text-decoration: none;
+  /* por si es <a> con .btn */
+}
+
+.btn:hover {
+  background-color: var(--btn-hover-bg);
+}
+
+.btn:active {
+  transform: translateY(1px);
+}
+
+.btn-ghost {
+  background: transparent;
+  border-color: transparent;
+}
+
+.btn-outline {
+  background: transparent;
+  border-color: currentColor;
+  color: inherit;
+}
+
+.btn-sm {
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: .9rem;
+}
+
+.btn-lg {
+  padding: 10px 16px;
+  border-radius: 10px;
+  font-size: 1.05rem;
+}
+
+.card {
+  background-color: var(--bg);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  transition: transform 0.3s, background 0.3s;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  color: var(--fg);
 }

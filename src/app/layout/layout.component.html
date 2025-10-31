@@ -5,14 +5,22 @@
     </div>
   </div>
 
-  <div class="menu-container">
-    <button *ngFor="let item of menuItems">{{ item }}</button>
-  </div>
+  <nav class="menu-container" role="navigation" aria-label="Principal">
+    <a
+      *ngFor="let m of menu"
+      [routerLink]="m.path"
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: true }"
+      class="btn btn-sm"
+    >
+      {{ m.label }}
+    </a>
+  </nav>
 
   <div class="right-space">
-    <div class="mode-toggle" (click)="toggleMode()">
+    <button class="mode-toggle" (click)="toggleMode()">
       {{ modeAscii }}
-    </div>
+    </button>
   </div>
 </header>
 

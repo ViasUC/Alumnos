@@ -1,0 +1,212 @@
+/* ----- Layout general ----- */
+.perfil {
+  display: grid;
+  gap: 16px;
+}
+
+/* Card genérica coherente con tu sistema */
+.card {
+  background: var(--surface);
+  color: var(--fg);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .12);
+}
+
+/* ----- Header de info ----- */
+.info-card {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: start;
+}
+
+.info-card .edit {
+  position: relative;
+  align-self: start;
+}
+
+.info-grid {
+  display: grid;
+}
+
+.kvs {
+  display: grid;
+  gap: 10px;
+}
+
+.kv {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.k {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.v {
+  font-weight: 500;
+}
+
+/* ----- Grid 3 columnas: certificados | experiencias | sobre mí ----- */
+.grid-3 {
+  display: grid;
+  grid-template-columns: 1.1fr 2fr 1fr;
+  gap: 16px;
+}
+
+/* ----- Paneles ----- */
+.panel-header {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.panel-header.center h2 {
+  text-align: center;
+}
+
+.panel-header h2 {
+  margin: 0;
+  font-weight: 700;
+}
+
+.cols-head {
+  display: grid;
+  grid-template-columns: 1.2fr 1.4fr .8fr;
+  font-size: .92rem;
+  opacity: .8;
+  border-top: 1px solid rgba(0, 0, 0, .08);
+  padding-top: 8px;
+}
+
+/* ----- Certificados (lista scrollable) ----- */
+.cert-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 340px;
+  overflow: auto;
+  display: grid;
+  gap: 10px;
+}
+
+.cert-item {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 10px 12px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, .06);
+}
+
+.cert-left strong {
+  display: block;
+}
+
+.cert-left small {
+  opacity: .8;
+}
+
+.cert-right {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.cert-right .link {
+  background: transparent;
+  border: none;
+  color: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 0;
+}
+
+.chev {
+  font-size: 1.2rem;
+  opacity: .6;
+}
+
+/* ----- Experiencias ----- */
+.exp-list {
+  max-height: 420px;
+  overflow: auto;
+  display: grid;
+  gap: 12px;
+}
+
+.exp-row {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px;
+  display: grid;
+  grid-template-columns: 1.2fr 1.4fr .8fr;
+  gap: 12px;
+  align-items: start;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, .06);
+}
+
+.exp-main strong {
+  display: block;
+}
+
+.exp-main small {
+  opacity: .75;
+}
+
+.pill,
+.tag {
+  display: inline-block;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: .9rem;
+  margin: 4px 6px 0 0;
+  background: var(--muted-bg);
+  border: 1px solid var(--border);
+}
+
+.tag {
+  font-weight: 700;
+  background: color-mix(in srgb, var(--accent), transparent 78%);
+}
+
+/* ----- Sobre mí ----- */
+.about {
+  display: grid;
+  gap: 10px;
+  max-height: 420px;
+  overflow: auto;
+}
+
+/* ----- Scrollbar (webkit) opcional ----- */
+.cert-list::-webkit-scrollbar,
+.exp-list::-webkit-scrollbar,
+.about::-webkit-scrollbar {
+  width: 10px;
+}
+
+.cert-list::-webkit-scrollbar-thumb,
+.exp-list::-webkit-scrollbar-thumb,
+.about::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--accent), transparent 70%);
+  border-radius: 10px;
+}
+
+/* ----- Responsivo ----- */
+@media (max-width: 1200px) {
+  .grid-3 {
+    grid-template-columns: 1fr;
+  }
+
+  .cols-head,
+  .exp-row {
+    grid-template-columns: 1fr;
+  }
+}

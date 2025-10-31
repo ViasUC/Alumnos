@@ -1,18 +1,5 @@
-.card {
-  background-color: var(--color-bg-dark);
-  border-radius: 12px;
-  padding: 16px;
-  margin-bottom: 16px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-  transition: transform 0.3s, background 0.3s;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
 body.light-mode .card {
   background-color: #ffffff;
-  color: #023e8a;
 }
 
 /* Header con nombre y tipo */
@@ -30,7 +17,7 @@ body.light-mode .card {
 
 .card-type {
   background-color: #48cae4;
-  color: #023e8a;
+  color: var(--bg);
   font-size: 0.85rem;
   font-weight: 600;
   padding: 2px 8px;
@@ -71,20 +58,8 @@ body.light-mode .card {
   gap: 6px;
 }
 
-/* Botón de descarga */
-.download {
+:host .btn {
   align-self: flex-start;
-  background-color: var(--color-accent-dark);
-  color: var(--text-light);
-  border: none;
-  padding: 6px 12px;
-  border-radius: 6px;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  cursor: pointer;
-  transition: background 0.3s;
 }
 
 body.light-mode .download {

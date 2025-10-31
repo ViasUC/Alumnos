@@ -1,0 +1,93 @@
+<section class="perfil">
+  <!-- Header de perfil (sin foto) -->
+  <div class="card info-card">
+    <div class="info-grid">
+      <div class="kvs">
+        <div class="kv">
+          <span class="k">Nombre</span><span class="v">{{ nombre }}</span>
+        </div>
+        <div class="kv">
+          <span class="k">Carrera/s en curso</span
+          ><span class="v">{{ carreras.join(", ") }}</span>
+        </div>
+        <div class="kv">
+          <span class="k">Semestre máximo</span
+          ><span class="v">{{ semestreMax }}</span>
+        </div>
+        <div class="kv">
+          <span class="k">Colegio</span><span class="v">{{ colegio }}</span>
+        </div>
+        <div class="kv">
+          <span class="k">Idiomas</span
+          ><span class="v">{{ idiomas.join(", ") }}</span>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn btn-sm edit" (click)="editarPerfil()" title="Editar">
+      Editar ✎
+    </button>
+  </div>
+
+  <!-- Grid principal: certificados / experiencias / sobre mí -->
+  <div class="grid-3">
+    <!-- Certificados -->
+    <section class="card panel">
+      <header class="panel-header">
+        <h2>Certificados</h2>
+      </header>
+
+      <ul class="cert-list">
+        <li class="cert-item" *ngFor="let c of certificados">
+          <div class="cert-left">
+            <strong>{{ c.titulo }}</strong>
+            <small>{{ c.anio }} · {{ c.horas }}hrs</small>
+          </div>
+          <div class="cert-right">
+            <button class="link" (click)="verCertificado(c)">
+              Ver detalles
+            </button>
+            <span class="chev">›</span>
+          </div>
+        </li>
+      </ul>
+    </section>
+
+    <!-- Experiencias -->
+    <section class="card panel">
+      <header class="panel-header center">
+        <h2>Experiencias</h2>
+        <div class="cols-head">
+          <span>Experiencia · Duración</span>
+          <span>Habilidades aprendidas</span>
+          <span>Herramientas</span>
+        </div>
+      </header>
+
+      <div class="exp-list">
+        <article class="exp-row" *ngFor="let e of experiencias">
+          <div class="exp-col exp-main">
+            <strong>{{ e.cargo }}</strong>
+            <small>{{ e.desde }} – {{ e.hasta }}</small>
+          </div>
+          <div class="exp-col exp-skills">
+            <span class="pill" *ngFor="let h of e.habilidades">{{ h }}</span>
+          </div>
+          <div class="exp-col exp-tech">
+            <span class="tag" *ngFor="let t of e.tech">{{ t }}</span>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- Sobre mí -->
+    <aside class="card panel">
+      <header class="panel-header">
+        <h2>Sobre mí</h2>
+      </header>
+      <div class="about">
+        <p *ngFor="let p of sobreMi">{{ p }}</p>
+      </div>
+    </aside>
+  </div>
+</section>

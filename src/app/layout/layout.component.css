@@ -3,7 +3,7 @@
   align-items: center;
   height: 60px;
   padding: 0 16px;
-  background-color: var(--color-bg-dark);
+  background-color: var(--bg);
   transition: background-color 0.5s ease;
 }
 
@@ -49,14 +49,11 @@
 }
 
 .mode-toggle:hover {
-  background-color: var(--color-accent-dark);
-  color: var(--color-light-dark);
+  background-color: var(--accent);
+  color: var(--color-light-light);
 }
 
-/* Light mode */
-body.light-mode .appbar {
-  background-color: var(--color-bg-light);
-}
+
 
 body.light-mode .mode-toggle:hover {
   background-color: var(--color-accent-light);
@@ -82,4 +79,14 @@ body.light-mode .mode-toggle:hover {
   .appbar .menu-container button {
     min-width: 80px;
   }
+}
+
+.menu-container a.active {
+  background-color: var(--accent-weak);
+  color: var(--bg);
+}
+
+.menu-container a.active .light-mode {
+  background-color: var(--accent-weak);
+  color: var(--bg);
 }
