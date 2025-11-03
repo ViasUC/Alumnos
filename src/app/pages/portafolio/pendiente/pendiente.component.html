@@ -1,1 +1,25 @@
-<p>pendiente works!</p>
+<div class="card" *ngIf="data">
+  <div class="status">
+    <span class="badge">⏳ Pendiente</span>
+  </div>
+
+  <div class="info">
+    <h3>{{ data.nombre }}</h3>
+    <p class="row">
+      <span>{{ data.fecha }}</span>
+      <span class="sep">·</span>
+      <span>{{ data.horas }} h</span>
+    </p>
+    <p class="row">
+      <b class="tipo">{{ data.tipo }}</b>
+      <span class="sep">·</span>
+      <span>{{ data.carrera }}</span>
+    </p>
+    <p class="areas">Áreas: {{ data.areas.join(", ") }}</p>
+    <small class="meta" *ngIf="data.origen">{{ data.origen }}</small>
+  </div>
+
+  <div class="cta">
+    <button class="btn btn-sm">Ver detalle</button>
+  </div>
+</div>

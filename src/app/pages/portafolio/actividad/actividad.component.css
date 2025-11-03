@@ -1,35 +1,39 @@
 .card {
+  background: var(--surface-2);
   color: var(--fg);
-  transition: transform 0.2s;
-  padding: 10px;
-  gap: 12px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, .10);
+  transition: transform .15s ease, box-shadow .15s ease;
+  margin-bottom: 12px;
 }
 
 .card:hover {
-  transform: scale(1.01);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, .14);
 }
 
-body.light-mode .card {
-  background-color: #caf0f8;
-
+.info h3 {
+  margin: 0 0 4px;
+  font-size: 1.05rem;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-  .card-info {
-    flex-direction: column;
-  }
-
-  .card-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 6px;
-  }
+.info p {
+  margin: 2px 0;
+  opacity: .9;
 }
 
-/* Info secundaria: carrera, áreas, lugar y origen */
+/* Info secundaria: carrera, áreas, lugar y origen (si la usas) */
 .card-details {
   display: flex;
   flex-direction: column;
   gap: 6px;
+}
+
+/* Responsive del contenido interno */
+@media (max-width: 768px) {
+  .card {
+    padding: 10px;
+  }
 }

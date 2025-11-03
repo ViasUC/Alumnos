@@ -1,59 +1,92 @@
 .portafolio-container {
-  display: flex;
-  gap: 24px;
-  padding: 16px;
-  transition: all 0.4s ease;
-}
-
-.pendientes {
-  flex: 1;
-  min-width: 250px;
-  background-color: var(--color-secondary-dark);
-  border-radius: 12px;
-  padding: 16px;
-  color: var(--text-light);
-}
-
-.contenido {
-  flex: 3;
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: 1fr;
   gap: 16px;
+  padding: 16px;
 }
 
-.lista-certificados,
-.lista-actividades {
-  background-color: var(--color-secondary-dark);
-  border-radius: 12px;
-  padding: 20px;
-  color: var(--text-light);
-  transition: background 0.3s;
-}
-
-body.light-mode .pendientes,
-body.light-mode .lista-certificados,
-body.light-mode .lista-actividades {
-  background-color: #f0f8ff;
-  color: #023e8a;
-}
-
-/* Certificado y actividad cards */
-.card {
-  background-color: var(--surface);
-  border-radius: 8px;
+/* Paneles neutros */
+.contenido>div {
+  background: var(--surface);
+  color: var(--fg);
+  border: 1px solid var(--border);
+  border-radius: 16px;
   padding: 16px;
   margin-bottom: 16px;
-  /* separación entre cards */
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-  transition: background 0.3s, transform 0.3s;
 }
 
-body.light-mode .card {
-  background-color: #ffffff;
-  color: #023e8a;
+/* Header de panel con acciones a la derecha */
+.panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
 }
 
-.card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+.panel-header h2 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+/* Tabs */
+.tabs {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 6px;
+  display: inline-flex;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.tab {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  color: var(--fg);
+  border-radius: 999px;
+  padding: 6px 12px;
+  cursor: pointer;
+}
+
+.tab:hover {
+  background: var(--muted-bg);
+}
+
+.tab.active {
+  /* verde consistente con el layout activo */
+  background: #10b981;
+  color: #0b1220;
+  border-color: transparent;
+}
+
+:host-context(body.light-mode) .tab.active {
+  background: #86efac;
+  color: #064e3b;
+  border-color: #34d399;
+}
+
+/* Lista de pendientes y mensaje vacío */
+.lista-pendientes .empty {
+  opacity: .8;
+  border: 1px dashed var(--border);
+  border-radius: 12px;
+  padding: 12px;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .portafolio-container {
+    gap: 12px;
+    padding: 12px;
+  }
+
+  .contenido>div {
+    border-radius: 12px;
+    padding: 12px;
+  }
+
+  .panel-header h2 {
+    font-size: 1rem;
+  }
 }

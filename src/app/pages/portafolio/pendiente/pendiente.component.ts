@@ -1,10 +1,26 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
+import { CommonModule } from '@angular/common';
+
+export type PendienteData = {
+  id: number | string;
+  nombre: string;
+  fecha: string;
+  horas: number;
+  tipo: string;
+  carrera: string;
+  areas: string[];
+  lugar?: string;
+  origen?: string;
+  estado?: string; // "Pendiente"
+};
 
 @Component({
   selector: 'app-pendiente-card',
   standalone: true,
-  imports: [],
+  imports: [CommonModule],
   templateUrl: './pendiente.component.html',
-  styleUrl: './pendiente.component.css',
+  styleUrls: ['./pendiente.component.css'],
 })
-export class PendienteComponent {}
+export class PendienteComponent {
+  @Input() data!: PendienteData;
+}

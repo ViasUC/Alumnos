@@ -1,1 +1,64 @@
-<p>convenios works!</p>
+<section class="convenios card">
+  <header class="panel-header">
+    <h1>Convenios</h1>
+
+    <div class="filters">
+      <label class="search">
+        <span class="icon">🔎</span>
+        <input
+          type="text"
+          [(ngModel)]="q"
+          placeholder="Buscar por entidad, título o descripción..."
+          aria-label="Buscar convenio"
+        />
+      </label>
+
+      <label class="only">
+        <input type="checkbox" [(ngModel)]="onlyActive" />
+        <span>Solo activos</span>
+      </label>
+    </div>
+  </header>
+
+  <div class="grid">
+    <article
+      class="c-card"
+      *ngFor="let c of list"
+      [class.active]="status(c) === 'Activo'"
+      [class.soon]="status(c) === 'Próximo'"
+      [class.expired]="status(c) === 'Expirado'"
+    >
+      <div class="c-head">
+        <span class="entidad">{{ c.entidad }}</span>
+        <span
+          class="status"
+          [class.ok]="status(c) === 'Activo'"
+          [class.soon]="status(c) === 'Próximo'"
+          [class.bad]="status(c) === 'Expirado'"
+        >
+          {{ status(c) }}
+        </span>
+      </div>
+
+      <h3 class="title">{{ c.titulo }}</h3>
+      <p class="desc">{{ c.descripcion }}</p>
+
+      <div class="meta">
+        <div class="kv">
+          <span class="k">Inicio</span>
+          <span class="v">{{ c.inicio | date : "dd/MM/yyyy" }}</span>
+        </div>
+        <div class="kv">
+          <span class="k">Fin</span>
+          <span class="v">{{ c.fin | date : "dd/MM/yyyy" }}</span>
+        </div>
+      </div>
+
+      <div class="cta">
+        <button class="btn btn-sm" (click)="ver(c)">Ver</button>
+      </div>
+    </article>
+  </div>
+
+  <div class="empty" *ngIf="!list.length">No se encontraron convenios.</div>
+</section>

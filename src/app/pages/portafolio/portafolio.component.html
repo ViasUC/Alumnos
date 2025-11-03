@@ -1,23 +1,68 @@
 <div class="portafolio-container">
-  <section class="pendientes">
-    <app-pendiente-card></app-pendiente-card>
-  </section>
-
   <section class="contenido">
-    <div class="lista-certificados">
-      <h2>Certificados Externos</h2>
-      <app-certificado-card
-        *ngFor="let cert of certificados"
-        [data]="cert"
-      ></app-certificado-card>
+    <!-- Tabs -->
+    <div class="tabs">
+      <button
+        class="tab"
+        [class.active]="activeTab === 'aprobadas'"
+        (click)="activeTab = 'aprobadas'"
+      >
+        Aprobadas
+      </button>
+      <button
+        class="tab"
+        [class.active]="activeTab === 'pendientes'"
+        (click)="activeTab = 'pendientes'"
+      >
+        Pendientes
+      </button>
     </div>
 
-    <div class="lista-actividades">
-      <h2>Actividades Aprobadas (Vías UC)</h2>
-      <app-actividad-card
-        *ngFor="let act of actividades"
-        [data]="act"
-      ></app-actividad-card>
-    </div>
+    <!-- Contenido de pestañas -->
+    <ng-container *ngIf="activeTab === 'aprobadas'; else tabPendientes">
+      <div class="lista-certificados">
+        <div class="panel-header">
+          <h2>Certificados Externos</h2>
+          <div class="actions">
+            <button class="btn btn-sm" (click)="cargarCertificadoExterno()">
+              Cargar certificado externo
+            </button>
+          </div>
+        </div>
+        <app-certificado-card
+          *ngFor="let cert of certificados"
+          [data]="cert"
+        ></app-certificado-card>
+      </div>
+
+      <div class="lista-actividades">
+        <div class="panel-header">
+          <h2>Actividades Aprobadas (Vías UC)</h2>
+        </div>
+        <app-actividad-card
+          *ngFor="let act of actividades"
+          [data]="act"
+        ></app-actividad-card>
+      </div>
+    </ng-container>
+
+    <ng-template #tabPendientes>
+      <div class="lista-pendientes">
+        <div class="panel-header">
+          <h2>Pendientes</h2>
+        </div>
+
+        <ng-container *ngIf="pendientes?.length; else sinPendientes">
+          <app-pendiente-card
+            *ngFor="let p of pendientes"
+            [data]="p"
+          ></app-pendiente-card>
+        </ng-container>
+
+        <ng-template #sinPendientes>
+          <div class="empty">No tienes elementos pendientes.</div>
+        </ng-template>
+      </div>
+    </ng-template>
   </section>
 </div>

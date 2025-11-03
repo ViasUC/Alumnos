@@ -1,5 +1,12 @@
-body.light-mode .card {
-  background-color: #ffffff;
+/* Card neutro */
+.card {
+  background: var(--surface-2);
+  color: var(--fg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, .10);
+  margin-bottom: 12px;
 }
 
 /* Header con nombre y tipo */
@@ -7,39 +14,45 @@ body.light-mode .card {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 8px;
   flex-wrap: wrap;
 }
 
 .card-title {
-  font-size: 1.25rem;
-  font-weight: bold;
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 700;
 }
 
+/* “Pill” neutral (antes azul) */
 .card-type {
-  background-color: #48cae4;
-  color: var(--bg);
-  font-size: 0.85rem;
+  background: var(--muted-bg);
+  color: var(--fg);
+  border: 1px solid var(--border);
+  font-size: .85rem;
   font-weight: 600;
-  padding: 2px 8px;
-  border-radius: 6px;
+  padding: 2px 10px;
+  border-radius: 999px;
 }
 
 /* Info principal (horas y fecha) */
 .card-info {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px 12px;
+  align-items: center;
+  margin-top: 8px;
 }
 
 .info-item {
-  display: flex;
-  gap: 4px;
+  display: inline-flex;
+  gap: 6px;
 }
 
 .label {
   font-weight: 600;
-  color: #90e0ef;
+  opacity: .75;
+  /* en lugar de azul fuerte */
 }
 
 .value {
@@ -48,39 +61,29 @@ body.light-mode .card {
 
 /* Info secundaria: carrera, áreas, lugar y origen */
 .card-details {
-  display: flex;
-  flex-direction: column;
+  display: grid;
   gap: 6px;
+  margin-top: 6px;
 }
 
 .detail-item {
-  display: flex;
-  gap: 6px;
+  display: inline-flex;
+  gap: 8px;
 }
 
+/* Botón (usa la .btn global) */
 :host .btn {
   align-self: flex-start;
-}
-
-body.light-mode .download {
-  background-color: #48cae4;
-  color: #023e8a;
-}
-
-.download:hover {
-  background-color: #0096c7;
-  color: #ffffff;
+  margin-top: 8px;
 }
 
 /* Responsive */
 @media (max-width: 768px) {
   .card-info {
-    flex-direction: column;
+    grid-template-columns: 1fr;
   }
 
   .card-header {
-    flex-direction: column;
     align-items: flex-start;
-    gap: 6px;
   }
 }

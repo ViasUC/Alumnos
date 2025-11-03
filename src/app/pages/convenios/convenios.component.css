@@ -1,0 +1,255 @@
+/* Card contenedor principal (coherente con el sistema) */
+.card {
+  background: var(--surface);
+  color: var(--fg);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 16px;
+}
+
+/* Header + filtros */
+.panel-header {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.panel-header h1 {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.filters {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* Buscador */
+.search {
+  display: grid;
+  grid-template-columns: 24px 1fr;
+  align-items: center;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 6px 10px;
+}
+
+.search .icon {
+  text-align: center;
+  opacity: .8;
+}
+
+.search input {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--fg);
+}
+
+/* Solo activos */
+.only {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 6px 10px;
+}
+
+/* Grilla de convenios */
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+/* Card de convenio */
+.c-card {
+  background: var(--surface-2);
+  color: var(--fg);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--border);
+  /* se recolorea por estado */
+  border-radius: 12px;
+  padding: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, .10);
+  display: grid;
+  gap: 10px;
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+
+.c-card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, .14);
+}
+
+/* Borde por estado */
+.c-card.active {
+  border-left-color: #10b981;
+}
+
+/* verde 500 */
+.c-card.soon {
+  border-left-color: #64748b;
+}
+
+/* slate 500 */
+.c-card.expired {
+  border-left-color: #ef4444;
+}
+
+/* rojo 500 */
+
+:host-context(body.light-mode) .c-card.active {
+  border-left-color: #86efac;
+}
+
+/* verde 300 */
+:host-context(body.light-mode) .c-card.soon {
+  border-left-color: #94a3b8;
+}
+
+/* slate 300 */
+:host-context(body.light-mode) .c-card.expired {
+  border-left-color: #fca5a5;
+}
+
+/* rojo 300 */
+
+/* Head: entidad + status */
+.c-head {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 8px;
+}
+
+.entidad {
+  font-weight: 700;
+}
+
+/* Badge de estado */
+.status {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  font-size: .85rem;
+  font-weight: 700;
+}
+
+.status.ok {
+  background: rgba(16, 185, 129, .15);
+  color: #10b981;
+}
+
+/* green-500 */
+.status.soon {
+  background: rgba(100, 116, 139, .15);
+  color: #64748b;
+}
+
+/* slate-500 */
+.status.bad {
+  background: rgba(239, 68, 68, .12);
+  color: #ef4444;
+}
+
+/* red-500 */
+
+:host-context(body.light-mode) .status.ok {
+  background: rgba(134, 239, 172, .40);
+  color: #065f46;
+}
+
+/* green-300/800 */
+:host-context(body.light-mode) .status.soon {
+  background: rgba(148, 163, 184, .35);
+  color: #334155;
+}
+
+/* slate-300/700 */
+:host-context(body.light-mode) .status.bad {
+  background: rgba(252, 165, 165, .35);
+  color: #b91c1c;
+}
+
+/* red-300/700 */
+
+/* Título y texto */
+.title {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.desc {
+  margin: 0;
+  opacity: .92;
+}
+
+/* Meta con fechas */
+.meta {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px 12px;
+}
+
+.kv {
+  display: inline-flex;
+  gap: 8px;
+  align-items: baseline;
+}
+
+.k {
+  opacity: .75;
+  font-weight: 700;
+}
+
+.v {
+  opacity: .95;
+}
+
+/* CTA */
+.cta {
+  display: inline-flex;
+  gap: 10px;
+}
+
+/* Empty */
+.empty {
+  opacity: .8;
+  border: 1px dashed var(--border);
+  border-radius: 12px;
+  padding: 12px;
+  margin-top: 8px;
+}
+
+/* Responsive */
+@media (max-width: 1100px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .panel-header {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .card {
+    border-radius: 12px;
+    padding: 12px;
+  }
+
+  .search,
+  .only {
+    padding: 6px 8px;
+  }
+}

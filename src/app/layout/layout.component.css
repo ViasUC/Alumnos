@@ -1,13 +1,24 @@
+/* --------- contenedor general con bordes redondeados --------- */
+.shell {
+  max-width: 1200px;
+  margin: 16px auto;
+  padding: 12px;
+  border-radius: 24px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, .18);
+}
+
+/* appbar sin “bloquear” el fondo: usamos la surface del shell */
 .appbar {
   display: flex;
   align-items: center;
-  height: 60px;
-  padding: 0 16px;
-  background-color: var(--bg);
-  transition: background-color 0.5s ease;
+  min-height: 60px;
+  padding: 0 16px 12px 16px;
+  background: transparent;
+  border-bottom: 1px solid var(--border);
 }
 
-/* Contenedores flexibles */
 .appbar .left-space,
 .appbar .right-space {
   flex: 1;
@@ -17,76 +28,158 @@
 
 .appbar .right-space {
   justify-content: flex-end;
-  /* toggle siempre a la derecha */
 }
 
 .appbar .logo img {
   height: 40px;
 }
 
-.appbar .menu-container {
+/* menú centrado */
+.menu-container {
   display: flex;
   justify-content: center;
+  align-items: center;
   flex: 2;
-  gap: 16px;
-  transition: all 0.5s ease;
-  /* transición suave al cambiar tamaño */
+  gap: 14px;
 }
 
-.appbar .menu-container button {
-  min-width: 120px;
-  /* ancho mínimo constante */
-  transition: all 0.5s ease;
+/* estado activo del menú (DARK por defecto) */
+.menu-container a.active {
+  /* verde 500 aprox */
+  background-color: #10b981;
+  color: #0b1220;
+  /* texto oscuro sobre verde funciona bien en dark */
+  box-shadow: 0 2px 0 0 rgba(0, 0, 0, .25) inset;
 }
 
+/* override en LIGHT: verde más claro y texto más oscuro para contraste */
+:host-context(body.light-mode) .menu-container a.active {
+  /* verde 300 aprox */
+  background-color: #86efac;
+  color: #064e3b;
+  /* verde 800 aprox */
+  box-shadow: 0 2px 0 0 #34d399 inset;
+  /* un borde/“underline” verde 400 */
+}
+
+/* ---------- user chip centrado ---------- */
+.user-slot {
+  position: relative;
+}
+
+.user-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  color: var(--fg);
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, .08);
+}
+
+.user-chip .name {
+  font-weight: 700;
+}
+
+.user-chip .role {
+  opacity: .8;
+  font-size: .9rem;
+}
+
+/* flecha de color fijo (no depende del tema) */
+.user-chip .caret {
+  color: #6b7280;
+}
+
+/* gris 500 */
+
+.user-chip[aria-expanded="true"] .caret {
+  transform: rotate(180deg);
+}
+
+/* dropdown */
+.dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  min-width: 220px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: 0 14px 28px rgba(0, 0, 0, .20);
+  padding: 8px;
+  z-index: 20;
+}
+
+.dropdown-title {
+  font-size: .85rem;
+  opacity: .8;
+  margin: 4px 8px 8px;
+}
+
+.drop-item {
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  border: 1px solid transparent;
+  color: inherit;
+  padding: 8px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.drop-item:hover {
+  background: var(--muted-bg);
+  border-color: var(--border);
+}
+
+.drop-item.danger {
+  color: #ef4444;
+}
+
+/* color fijo para “peligro” */
+.drop-item.danger:hover {
+  background: rgba(239, 68, 68, .10);
+}
+
+.divider {
+  height: 1px;
+  background: var(--border);
+  margin: 6px 4px;
+}
+
+/* --------- contenido principal dentro del shell --------- */
+.page-content {
+  padding: 16px;
+  border-radius: 16px;
+  background: var(--surface);
+}
+
+/* toggle tema */
 .mode-toggle {
   cursor: pointer;
   font-weight: bold;
-  padding: 4px 8px;
-  border-radius: 4px;
-  max-width: 80px;
-  transition: background-color 0.5s ease, color 0.5s ease;
+  padding: 6px 10px;
+  border-radius: 10px;
+  transition: background-color .2s ease, color .2s ease;
 }
 
 .mode-toggle:hover {
-  background-color: var(--accent);
-  color: var(--color-light-light);
+  background-color: var(--muted-bg);
 }
 
-
-
-body.light-mode .mode-toggle:hover {
-  background-color: var(--color-accent-light);
-  color: var(--color-light-light);
-}
-
-/* Responsive suave al achicar pantalla */
-@media (max-width: 1200px) {
-  .appbar {
-    padding: 0 12px;
-  }
-
-  .appbar .menu-container button {
-    min-width: 100px;
-  }
-}
-
+/* responsive */
 @media (max-width: 992px) {
-  .appbar {
-    padding: 0 8px;
+  .menu-container {
+    gap: 8px;
   }
 
-  .appbar .menu-container button {
-    min-width: 80px;
+  .user-chip .name {
+    display: none;
   }
-}
 
-.menu-container a.active {
-  background-color: var(--accent-weak);
-  color: var(--bg);
-}
-
-.menu-container a.active .light-mode {
-  background-color: var(--accent-weak);
-  color: var(--bg);
+  /* compactar: dejar rol + caret */
 }

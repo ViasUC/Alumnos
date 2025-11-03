@@ -61,4 +61,24 @@ export class PortafolioComponent {
       estado: 'Aprobado',
     },
   ];
+  // pestaña activa: 'aprobadas' | 'pendientes'
+  activeTab: 'aprobadas' | 'pendientes' = 'aprobadas';
+
+  // si tus pendientes tienen la misma forma que actividades:
+  get pendientes(): any[] {
+    return this.actividades.filter(
+      (a) => (a.estado || '').toLowerCase() !== 'aprobado'
+    );
+  }
+
+  // si también tenés certificados pendientes y los querés mezclar aquí, podés extender:
+  // return [
+  //   ...this.actividades.filter(...),
+  //   ...this.certificados.filter(c => (c.estado || '').toLowerCase() !== 'aprobado'),
+  // ];
+
+  cargarCertificadoExterno() {
+    // TODO: abrir modal / input[type=file] / navegar a formulario
+    alert('Subir certificado externo');
+  }
 }
