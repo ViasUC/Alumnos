@@ -1,32 +1,127 @@
 <section class="perfil">
-  <!-- Header de perfil (sin foto) -->
+  <!-- Header de perfil -->
   <div class="card info-card">
     <div class="info-grid">
       <div class="kvs">
+        <!-- Nombre + Apellido -->
         <div class="kv">
-          <span class="k">Nombre</span><span class="v">{{ nombre }}</span>
+          <span class="k">Nombre</span>
+          <span class="v" *ngIf="!editMode">{{ nombreCompleto }}</span>
+          <span class="v v-edit" *ngIf="editMode">
+            <input
+              class="inline-input"
+              [(ngModel)]="editable.nombre"
+              placeholder="Nombre"
+            />
+            <input
+              class="inline-input"
+              [(ngModel)]="editable.apellido"
+              placeholder="Apellido"
+            />
+          </span>
         </div>
+
+        <!-- Carrera -->
         <div class="kv">
-          <span class="k">Carrera/s en curso</span
-          ><span class="v">{{ carreras.join(", ") }}</span>
+          <span class="k">Carrera/s en curso</span>
+          <span class="v" *ngIf="!editMode">{{ editable.carrera }}</span>
+          <span class="v v-edit" *ngIf="editMode">
+            <input
+              class="inline-input"
+              [(ngModel)]="editable.carrera"
+              placeholder="Carrera"
+            />
+          </span>
         </div>
+
+        <!-- Semestre -->
         <div class="kv">
-          <span class="k">Semestre máximo</span
-          ><span class="v">{{ semestreMax }}</span>
+          <span class="k">Semestre máximo</span>
+          <span class="v" *ngIf="!editMode">{{ semestreLabel }}</span>
+          <span class="v v-edit" *ngIf="editMode">
+            <input
+              class="inline-input"
+              type="number"
+              min="1"
+              [(ngModel)]="editable.semestre"
+            />
+          </span>
         </div>
+
+        <!-- Teléfono -->
         <div class="kv">
-          <span class="k">Colegio</span><span class="v">{{ colegio }}</span>
+          <span class="k">Teléfono</span>
+          <span class="v" *ngIf="!editMode">{{ editable.telefono }}</span>
+          <span class="v v-edit" *ngIf="editMode">
+            <input
+              class="inline-input"
+              [(ngModel)]="editable.telefono"
+              placeholder="Teléfono"
+            />
+          </span>
         </div>
+
+        <!-- Roles (solo lectura, no se edita) -->
         <div class="kv">
-          <span class="k">Idiomas</span
-          ><span class="v">{{ idiomas.join(", ") }}</span>
+          <span class="k">Roles</span>
+          <span class="v">{{ rolPrincipal }}</span>
+        </div>
+
+        <!-- Email -->
+        <div class="kv">
+          <span class="k">Email</span>
+          <span class="v" *ngIf="!editMode">{{ editable.email }}</span>
+          <span class="v v-edit" *ngIf="editMode">
+            <input
+              class="inline-input"
+              [(ngModel)]="editable.email"
+              placeholder="Email"
+            />
+          </span>
+        </div>
+
+        <!-- Ubicación (si querés mostrarla / editarla) -->
+        <div class="kv">
+          <span class="k">Ubicación</span>
+          <span class="v" *ngIf="!editMode">{{ editable.ubicacion }}</span>
+          <span class="v v-edit" *ngIf="editMode">
+            <input
+              class="inline-input"
+              [(ngModel)]="editable.ubicacion"
+              placeholder="Ubicación"
+            />
+          </span>
         </div>
       </div>
     </div>
 
-    <button class="btn btn-sm edit" (click)="editarPerfil()" title="Editar">
-      Editar ✎
-    </button>
+    <!-- Botones editar / guardar / cancelar -->
+    <div class="info-actions">
+      <button
+        class="btn btn-sm edit"
+        *ngIf="!editMode"
+        (click)="editarPerfil()"
+        title="Editar"
+      >
+        Editar ✎
+      </button>
+
+      <ng-container *ngIf="editMode">
+        <button
+          class="btn btn-sm primary"
+          [disabled]="saving"
+          (click)="guardarPerfil()"
+        >
+          {{ saving ? "Guardando..." : "Guardar" }}
+        </button>
+        <button class="btn btn-sm ghost" (click)="cancelarEdicion()">
+          Cancelar
+        </button>
+      </ng-container>
+    </div>
+
+    <p class="msg ok" *ngIf="saveMsg">{{ saveMsg }}</p>
+    <p class="msg error" *ngIf="errorMsg">{{ errorMsg }}</p>
   </div>
 
   <!-- Grid principal: certificados / experiencias / sobre mí -->

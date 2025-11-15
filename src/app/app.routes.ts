@@ -4,12 +4,12 @@ import { PortafolioComponent } from './pages/portafolio/portafolio.component';
 import { OportunidadesComponent } from './pages/oportunidades/oportunidades.component';
 import { ConveniosComponent } from './pages/convenios/convenios.component';
 import { PerfilComponent } from './pages/perfil/perfil.component';
+import { LoginComponent } from './pages/login/login.component';
 
 export const routes: Routes = [
   {
     path: 'login',
-    loadComponent: () =>
-      import('./pages/login/login.component').then((m) => m.LoginComponent),
+    component: LoginComponent,
   },
   {
     path: '',

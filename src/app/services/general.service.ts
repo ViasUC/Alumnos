@@ -16,6 +16,7 @@ const LOGIN_MUTATION = gql`
 @Injectable({ providedIn: 'root' })
 export class GeneralService {
   private readonly STORAGE_KEY = 'loginResponse';
+
   constructor(private apollo: Apollo) {}
 
   login(email: string, password: string): Observable<LoginResp> {
@@ -41,6 +42,10 @@ export class GeneralService {
   getSavedLogin(): LoginResp | null {
     const raw = localStorage.getItem(this.STORAGE_KEY);
     return raw ? (JSON.parse(raw) as LoginResp) : null;
+  }
+
+  getUserId(): string | null {
+    return localStorage.getItem('userId');
   }
 
   clearLogin(): void {

@@ -7,10 +7,10 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
+import { Router } from '@angular/router';
 import { finalize } from 'rxjs/operators';
 import { GeneralService } from '../../services/general.service';
 
-// Tipo del formulario fuertemente tipado
 type LoginForm = FormGroup<{
   email: FormControl<string>;
   password: FormControl<string>;
@@ -24,18 +24,21 @@ type LoginForm = FormGroup<{
   imports: [CommonModule, ReactiveFormsModule],
 })
 export class LoginComponent {
-  form!: LoginForm; // se inicializa en el constructor
+  form!: LoginForm;
   loading = false;
   errorMsg: string | null = null;
 
-  constructor(private fb: FormBuilder, private api: GeneralService) {
+  constructor(
+    private fb: FormBuilder,
+    private api: GeneralService,
+    private router: Router
+  ) {
     this.form = this.fb.nonNullable.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required]],
     });
   }
 
-  // Getters opcionales para que el template sea más legible
   get emailCtrl() {
     return this.form.controls.email;
   }
@@ -62,7 +65,8 @@ export class LoginComponent {
       .pipe(finalize(() => (this.loading = false)))
       .subscribe({
         next: () => {
-          // acá redirigís o lo que quieras
+          // login OK -> ir a portafolio (carga Layout + PortafolioComponent)
+          this.router.navigate(['/portafolio']);
         },
         error: (err) => {
           console.error('Error en login', err);

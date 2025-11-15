@@ -1,73 +1,99 @@
-<section class="opp">
-  <!-- Panel de filtros -->
-  <aside class="filters card">
-    <h2 class="filters-title">FILTROS</h2>
+<!-- filtros -->
+<aside class="filters card">
+  <h2 class="filters-title">FILTROS</h2>
 
-    <div class="filters-group" *ngFor="let k of kinds">
-      <button
-        class="filters-kind"
-        [class.active]="selectedKind === k"
-        (click)="setKind(selectedKind === k ? null : k)"
-      >
-        {{ k }}
-      </button>
+  <div class="filters-group" *ngFor="let k of kinds">
+    <button
+      class="filters-kind"
+      [class.active]="selectedKind === k"
+      (click)="setKind(selectedKind === k ? null : k)"
+    >
+      {{ k }}
+    </button>
 
-      <ul class="career-list">
-        <li *ngFor="let c of userCareers" class="career-item">
-          <span class="dot" [style.background]="careerColor(c)"></span>
-          <button
-            class="career-btn"
-            [class.on]="isCareerSelected(c)"
-            (click)="toggleCareer(c)"
-          >
-            {{ c }}
-          </button>
-        </li>
-      </ul>
+    <ul class="career-list">
+      <li *ngFor="let m of modalidades" class="career-item">
+        <span class="dot" [style.background]="modalidadColor(m)"></span>
+        <button
+          class="career-btn"
+          [class.on]="isModalidadSelected(m)"
+          (click)="toggleModalidad(m)"
+        >
+          {{ m }}
+        </button>
+      </li>
+    </ul>
+  </div>
+</aside>
+
+<!-- contenido principal -->
+<section class="content card">
+  <header class="content-header">
+    <h1>BUSCAR OPORTUNIDAD</h1>
+    <div class="search">
+      <span class="icon">🔎</span>
+      <input
+        type="text"
+        [(ngModel)]="search"
+        placeholder="Buscar por título, tipo, modalidad, empresa o ubicación..."
+        aria-label="Buscar oportunidad"
+      />
     </div>
-  </aside>
+  </header>
 
-  <!-- Contenido principal -->
-  <section class="content card">
-    <header class="content-header">
-      <h1>BUSCAR OPORTUNIDAD</h1>
-      <div class="search">
-        <span class="icon">🔎</span>
-        <input
-          type="text"
-          [(ngModel)]="search"
-          placeholder="Buscar por título o carrera..."
-          aria-label="Buscar oportunidad"
-        />
+  <div class="grid">
+    <article
+      class="opp-card"
+      *ngFor="let o of list"
+      [style.--band]="modalidadColor(o.modalidad)"
+      [class.is-job]="o.origin === 'bolsaTrabajo'"
+      [class.is-academic]="o.origin === 'oportunidad'"
+    >
+      <div class="opp-band">
+        <!-- modalidad -->
+        <span class="career">{{ o.title }}</span>
+        <span class="sep">—</span>
+        <span class="kind">{{ o.kind }}</span>
+
+        <!-- badge de origen -->
+        <span
+          class="origin-badge"
+          *ngIf="o.origin === 'bolsaTrabajo'; else origenAcademico"
+        >
+          Bolsa de trabajo
+        </span>
+        <ng-template #origenAcademico>
+          <span class="origin-badge origin-badge--academic">
+            Oportunidad académica
+          </span>
+        </ng-template>
       </div>
-    </header>
 
-    <div class="grid">
-      <article
-        class="opp-card"
-        *ngFor="let o of list"
-        [style.--band]="careerColor(o.career)"
-      >
-        <div class="opp-band">
-          <span class="career">{{ o.career }}</span>
-          <span class="sep">—</span>
-          <span class="kind">{{ o.kind }}</span>
+      <div class="opp-body">
+        <div class="info">
+          <strong class="title">{{ o.modalidad }}</strong>
+
+          <small class="meta" *ngIf="o.empresa">
+            Empresa: {{ o.empresa }}
+          </small>
+          <small class="meta" *ngIf="o.ubicacion">
+            Ubicación: {{ o.ubicacion }}
+          </small>
+
+          <small class="meta">{{ o.estado }}</small>
+          <small class="meta">
+            Cierra: {{ o.fechaCierre | date : "dd/MM/yyyy HH:mm" }}
+          </small>
         </div>
 
-        <div class="opp-body">
-          <div class="info">
-            <strong class="title">{{ o.title }}</strong>
-            <small class="meta">~{{ o.hours }} hrs</small>
-            <small class="meta">Inicio: {{ o.start }}</small>
-            <small class="meta">{{ o.credits }} créditos</small>
-          </div>
-
-          <div class="cta">
-            <button class="btn" (click)="inscribirse(o)">Inscribirse</button>
-            <button class="ghost" (click)="editar(o)" title="Editar">✎</button>
-          </div>
+        <div class="cta">
+          <button class="btn" (click)="inscribirse(o)">Inscribirse</button>
         </div>
-      </article>
-    </div>
-  </section>
+      </div>
+    </article>
+  </div>
+
+  <p class="error" *ngIf="errorMsg">
+    {{ errorMsg }}
+  </p>
 </section>

@@ -1,18 +1,12 @@
-import { Component } from '@angular/core';
+// src/app/pages/oportunidades/oportunidades.component.ts
 import { CommonModule } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-
-type Kind = 'Pasantía' | 'Beca' | 'Proyecto' | 'Empleo';
-
-interface Opportunity {
-  id: string;
-  title: string;
-  career: string; // p.ej. 'Ingeniería Informática', 'Diseño Gráfico'
-  kind: Kind;
-  start: string; // p.ej. '2026'
-  hours: number; // ~100
-  credits: number; // 1, 2, ...
-}
+import {
+  Kind,
+  Opportunity,
+  OportunidadesService,
+} from '../../services/oportunidades.service';
 
 @Component({
   standalone: true,
@@ -21,11 +15,24 @@ interface Opportunity {
   templateUrl: './oportunidades.component.html',
   styleUrls: ['./oportunidades.component.css'],
 })
-export class OportunidadesComponent {
-  // Carreras del usuario en orden => mapeo a paleta dinámica
-  userCareers = ['Ingeniería Informática', 'Diseño Gráfico'];
+export class OportunidadesComponent implements OnInit {
+  all: Opportunity[] = [];
 
-  // Paleta (1ª azul, 2ª púrpura; puedes extenderla sin tocar CSS)
+  // filtros
+  search = '';
+  kinds: Kind[] = [
+    'Pasantía',
+    'Beca',
+    'Proyecto',
+    'Empleo',
+    'Ayudantía',
+    'Otro',
+  ];
+  selectedKind: Kind | null = null;
+
+  modalidades: string[] = [];
+  selectedModalidades = new Set<string>(); // modalidad en minúsculas
+
   careerPalette = [
     '#4f46e5',
     '#a21caf',
@@ -35,140 +42,85 @@ export class OportunidadesComponent {
     '#9333ea',
   ];
 
-  // Tipos disponibles
-  kinds: Kind[] = ['Pasantía', 'Beca', 'Proyecto', 'Empleo'];
+  loading = false;
+  errorMsg: string | null = null;
 
-  // Datos mock (con el look del diseño)
-  all: Opportunity[] = [
-    {
-      id: '1',
-      title: 'AppCECyT',
-      career: 'Ingeniería Informática',
-      kind: 'Proyecto',
-      start: '2026',
-      hours: 100,
-      credits: 2,
-    },
-    {
-      id: '2',
-      title: 'GuaranIA',
-      career: 'Ingeniería Informática',
-      kind: 'Pasantía',
-      start: '2026',
-      hours: 100,
-      credits: 2,
-    },
-    {
-      id: '3',
-      title: 'Diseño de logo',
-      career: 'Diseño Gráfico',
-      kind: 'Pasantía',
-      start: '2026',
-      hours: 10,
-      credits: 1,
-    },
-    {
-      id: '4',
-      title: 'RubyOnRails',
-      career: 'Ingeniería Informática',
-      kind: 'Proyecto',
-      start: '2026',
-      hours: 100,
-      credits: 2,
-    },
-    {
-      id: '5',
-      title: 'SODEP',
-      career: 'Ingeniería Informática',
-      kind: 'Empleo',
-      start: '2026',
-      hours: 100,
-      credits: 2,
-    },
-    {
-      id: '6',
-      title: 'DGI - UCA',
-      career: 'Ingeniería Informática',
-      kind: 'Empleo',
-      start: '2026',
-      hours: 100,
-      credits: 2,
-    },
-    {
-      id: '7',
-      title: 'CBA',
-      career: 'Ingeniería Informática',
-      kind: 'Empleo',
-      start: '2026',
-      hours: 100,
-      credits: 2,
-    },
-    {
-      id: '8',
-      title: 'AppCECyT',
-      career: 'Diseño Gráfico',
-      kind: 'Proyecto',
-      start: '2026',
-      hours: 100,
-      credits: 2,
-    },
-    {
-      id: '9',
-      title: 'MentorMate',
-      career: 'Ingeniería Informática',
-      kind: 'Empleo',
-      start: '2026',
-      hours: 100,
-      credits: 2,
-    },
-    {
-      id: '10',
-      title: 'EmpresaDeDiseño',
-      career: 'Diseño Gráfico',
-      kind: 'Empleo',
-      start: '2026',
-      hours: 100,
-      credits: 2,
-    },
-  ];
+  constructor(private oportunidadesSvc: OportunidadesService) {}
 
-  // Estado de filtros
-  search = '';
-  selectedKind: Kind | null = null; // categoría activa (o null = todas)
-  selectedCareers = new Set<string>(this.userCareers); // por defecto, todas las del usuario
+  ngOnInit(): void {
+    this.loading = true;
+    this.oportunidadesSvc.getAllOportunities().subscribe({
+      next: (ops) => {
+        this.all = ops;
 
-  // Helpers de UI
-  isCareerSelected(c: string) {
-    return this.selectedCareers.has(c);
+        const set = new Map<string, string>();
+        for (const o of ops) {
+          const key = (o.modalidad ?? '').trim().toLowerCase();
+          if (key && !set.has(key)) set.set(key, o.modalidad);
+        }
+        this.modalidades = Array.from(set.values());
+        this.selectedModalidades = new Set(
+          this.modalidades.map((m) => m.toLowerCase())
+        );
+
+        this.loading = false;
+      },
+      error: (err) => {
+        console.error('Error cargando oportunidades', err);
+        this.errorMsg = 'No se pudieron cargar las oportunidades.';
+        this.loading = false;
+      },
+    });
   }
-  toggleCareer(c: string) {
-    if (this.selectedCareers.has(c)) this.selectedCareers.delete(c);
-    else this.selectedCareers.add(c);
+
+  isModalidadSelected(m: string): boolean {
+    return this.selectedModalidades.has(m.toLowerCase());
   }
-  setKind(k: Kind | null) {
+
+  toggleModalidad(m: string): void {
+    const key = m.toLowerCase();
+    if (this.selectedModalidades.has(key)) {
+      this.selectedModalidades.delete(key);
+    } else {
+      this.selectedModalidades.add(key);
+    }
+  }
+
+  setKind(k: Kind | null): void {
     this.selectedKind = k;
   }
 
-  // Color dinámico por carrera (según orden del usuario)
-  careerColor(career: string): string {
-    const idx = this.userCareers.findIndex(
-      (c) => c.toLowerCase() === career.toLowerCase()
-    );
-    return this.careerPalette[(idx >= 0 ? idx : 0) % this.careerPalette.length];
+  modalidadColor(modalidad: string): string {
+    const key = modalidad.toLowerCase();
+    const idx = this.modalidades.findIndex((m) => m.toLowerCase() === key);
+    const i = idx >= 0 ? idx : 0;
+    return this.careerPalette[i % this.careerPalette.length];
   }
 
-  // Lista filtrada
+  // lista filtrada y búsqueda case-insensitive
   get list(): Opportunity[] {
     const q = this.search.trim().toLowerCase();
+
     return this.all.filter((o) => {
       const passKind = !this.selectedKind || o.kind === this.selectedKind;
-      const passCareer =
-        this.selectedCareers.size === 0 || this.selectedCareers.has(o.career);
+
+      const passModalidad =
+        this.selectedModalidades.size === 0 ||
+        this.selectedModalidades.has((o.modalidad ?? '').toLowerCase());
+
+      const textoEmpresa = (o.empresa ?? '').toLowerCase();
+      const textoUbicacion = (o.ubicacion ?? '').toLowerCase();
+
       const passSearch =
         !q ||
         o.title.toLowerCase().includes(q) ||
-        o.career.toLowerCase().includes(q);
-      return passKind && passCareer && passSearch;
+        (o.descripcion ?? '').toLowerCase().includes(q) ||
+        (o.modalidad ?? '').toLowerCase().includes(q) ||
+        o.kind.toLowerCase().includes(q) ||
+        textoEmpresa.includes(q) ||
+        textoUbicacion.includes(q);
+
+      return passKind && passModalidad && passSearch;
     });
   }
 
