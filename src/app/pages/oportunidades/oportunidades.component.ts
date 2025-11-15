@@ -1,4 +1,3 @@
-// src/app/pages/oportunidades/oportunidades.component.ts
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -7,6 +6,8 @@ import {
   Opportunity,
   OportunidadesService,
 } from '../../services/oportunidades.service';
+
+type ViewMode = 'oportunidades' | 'bolsa';
 
 @Component({
   standalone: true,
@@ -17,6 +18,9 @@ import {
 })
 export class OportunidadesComponent implements OnInit {
   all: Opportunity[] = [];
+
+  // modo actual de vista: F2/F3 (oportunidades) o F4 (bolsa)
+  viewMode: ViewMode = 'oportunidades';
 
   // filtros
   search = '';
@@ -73,6 +77,11 @@ export class OportunidadesComponent implements OnInit {
     });
   }
 
+  // cambiar entre F2/F3 y F4
+  setViewMode(mode: ViewMode) {
+    this.viewMode = mode;
+  }
+
   isModalidadSelected(m: string): boolean {
     return this.selectedModalidades.has(m.toLowerCase());
   }
@@ -101,7 +110,15 @@ export class OportunidadesComponent implements OnInit {
   get list(): Opportunity[] {
     const q = this.search.trim().toLowerCase();
 
-    return this.all.filter((o) => {
+    // 1) separar por origen (oportunidades vs bolsa)
+    const originFiltered = this.all.filter((o) =>
+      this.viewMode === 'oportunidades'
+        ? o.origin === 'oportunidad'
+        : o.origin === 'bolsaTrabajo'
+    );
+
+    // 2) aplicar filtros
+    return originFiltered.filter((o) => {
       const passKind = !this.selectedKind || o.kind === this.selectedKind;
 
       const passModalidad =
@@ -125,7 +142,8 @@ export class OportunidadesComponent implements OnInit {
   }
 
   inscribirse(o: Opportunity) {
-    alert(`Inscripción a "${o.title}" (${o.kind})`);
+    // acá se reutiliza el flujo de aplicación (F2)
+    alert(`Aplicar a "${o.title}" (${o.kind})`);
   }
 
   editar(o: Opportunity) {

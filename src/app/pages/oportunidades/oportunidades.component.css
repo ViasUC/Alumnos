@@ -1,7 +1,7 @@
 /* --- layout principal --- */
 .opp {
   display: grid;
-  grid-template-columns: 280px 1fr;
+  grid-template-columns: minmax(260px, 320px) minmax(0, 1fr);
   gap: 16px;
 }
 
@@ -40,16 +40,7 @@
   color: #fff;
 }
 
-.origin-badge--academic {
-  background: #4f46e5;
-}
 
-/* --- filtros --- */
-.filters-title {
-  margin: 0 0 12px 0;
-  font-size: 1.1rem;
-  letter-spacing: .5px;
-}
 
 .filters-group {
   background: var(--surface-2);
@@ -252,5 +243,85 @@
 
 .opp-card:hover {
   box-shadow: 0 10px 22px rgba(0, 0, 0, .14);
+  transform: translateY(-1px);
+}
+
+/* --- layout principal --- */
+
+/* --- tarjetas base (neutrales, temables) --- */
+
+
+/* switch de vista (oportunidades vs bolsa) */
+.view-switch {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.view-btn {
+  flex: 1 1 auto;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.view-btn.active {
+  background: #2563eb;
+  color: #fff;
+  border-color: #1d4ed8;
+}
+
+/* borde o fondo distinto según origen */
+
+.opp-card.is-academic {
+  border-top: 4px solid #4f46e5;
+}
+
+.opp-card.is-job {
+  border-top: 4px solid #c2410c;
+}
+
+/* badge */
+
+.origin-badge {
+  margin-left: auto;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  background: #f97316;
+  color: #fff;
+}
+
+.origin-badge--academic {
+  background: #4f46e5;
+}
+
+/* --- filtros --- */
+.filters-title {
+  margin: 0 0 12px 0;
+  font-size: 1.1rem;
+  letter-spacing: 0.5px;
+}
+
+/* ... (resto de tus estilos tal cual) ... */
+
+/* --- responsive: filtros arriba cuando no hay espacio --- */
+@media (max-width: 1024px) {
+  .opp {
+    grid-template-columns: 1fr;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.opp-card:hover {
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.14);
   transform: translateY(-1px);
 }
