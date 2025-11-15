@@ -7,6 +7,11 @@ import { PerfilComponent } from './pages/perfil/perfil.component';
 
 export const routes: Routes = [
   {
+    path: 'login',
+    loadComponent: () =>
+      import('./pages/login/login.component').then((m) => m.LoginComponent),
+  },
+  {
     path: '',
     component: LayoutComponent,
     children: [
