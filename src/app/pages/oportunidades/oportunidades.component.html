@@ -109,8 +109,15 @@
             </small>
           </div>
 
+          <!-- dentro del *ngFor, solo cambio el botón -->
           <div class="cta">
-            <button class="btn" (click)="inscribirse(o)">Inscribirse</button>
+            <button
+              class="btn"
+              [disabled]="isApplying(o)"
+              (click)="inscribirse(o)"
+            >
+              {{ isApplying(o) ? "Postulando..." : "Inscribirse" }}
+            </button>
           </div>
         </div>
       </article>
@@ -121,3 +128,10 @@
     </p>
   </section>
 </section>
+<p class="ok" *ngIf="applyMsg">
+  {{ applyMsg }}
+</p>
+
+<p class="error" *ngIf="errorMsg">
+  {{ errorMsg }}
+</p>

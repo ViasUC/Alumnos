@@ -325,3 +325,9 @@
   box-shadow: 0 10px 22px rgba(0, 0, 0, 0.14);
   transform: translateY(-1px);
 }
+
+.ok {
+  color: #15803d;
+  margin-top: 8px;
+  font-size: 0.9rem;
+}

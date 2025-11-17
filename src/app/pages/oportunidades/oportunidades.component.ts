@@ -1,3 +1,4 @@
+// src/app/pages/oportunidades/oportunidades.component.ts
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -19,10 +20,8 @@ type ViewMode = 'oportunidades' | 'bolsa';
 export class OportunidadesComponent implements OnInit {
   all: Opportunity[] = [];
 
-  // modo actual de vista: F2/F3 (oportunidades) o F4 (bolsa)
   viewMode: ViewMode = 'oportunidades';
 
-  // filtros
   search = '';
   kinds: Kind[] = [
     'Pasantía',
@@ -35,7 +34,7 @@ export class OportunidadesComponent implements OnInit {
   selectedKind: Kind | null = null;
 
   modalidades: string[] = [];
-  selectedModalidades = new Set<string>(); // modalidad en minúsculas
+  selectedModalidades = new Set<string>();
 
   careerPalette = [
     '#4f46e5',
@@ -48,6 +47,10 @@ export class OportunidadesComponent implements OnInit {
 
   loading = false;
   errorMsg: string | null = null;
+
+  // nuevo: feedback de postulación
+  applyMsg: string | null = null;
+  applyingIds = new Set<string>(); // ids en los que se está postulando
 
   constructor(private oportunidadesSvc: OportunidadesService) {}
 
@@ -77,9 +80,10 @@ export class OportunidadesComponent implements OnInit {
     });
   }
 
-  // cambiar entre F2/F3 y F4
   setViewMode(mode: ViewMode) {
     this.viewMode = mode;
+    // reset de mensaje cuando cambiás de pestaña
+    this.applyMsg = null;
   }
 
   isModalidadSelected(m: string): boolean {
@@ -106,18 +110,15 @@ export class OportunidadesComponent implements OnInit {
     return this.careerPalette[i % this.careerPalette.length];
   }
 
-  // lista filtrada y búsqueda case-insensitive
   get list(): Opportunity[] {
     const q = this.search.trim().toLowerCase();
 
-    // 1) separar por origen (oportunidades vs bolsa)
     const originFiltered = this.all.filter((o) =>
       this.viewMode === 'oportunidades'
         ? o.origin === 'oportunidad'
         : o.origin === 'bolsaTrabajo'
     );
 
-    // 2) aplicar filtros
     return originFiltered.filter((o) => {
       const passKind = !this.selectedKind || o.kind === this.selectedKind;
 
@@ -141,9 +142,37 @@ export class OportunidadesComponent implements OnInit {
     });
   }
 
+  // botón deshabilitado mientras se postula
+  isApplying(o: Opportunity): boolean {
+    return this.applyingIds.has(o.id);
+  }
+
   inscribirse(o: Opportunity) {
-    // acá se reutiliza el flujo de aplicación (F2)
-    alert(`Aplicar a "${o.title}" (${o.kind})`);
+    this.applyMsg = null;
+    this.errorMsg = null;
+
+    const alumnoId = localStorage.getItem('userId');
+    if (!alumnoId) {
+      this.errorMsg = 'Debés iniciar sesión para postularte.';
+      return;
+    }
+
+    if (this.isApplying(o)) return;
+
+    this.applyingIds.add(o.id);
+
+    this.oportunidadesSvc.crearPostulacion(o.id, alumnoId).subscribe({
+      next: (resp) => {
+        this.applyingIds.delete(o.id);
+        this.applyMsg = `Te postulaste a "${o.title}" (estado: ${resp.estado}).`;
+      },
+      error: (err) => {
+        console.error('Error al crear postulación', err);
+        this.applyingIds.delete(o.id);
+        this.errorMsg =
+          'No se pudo completar la postulación. Intentá de nuevo más tarde.';
+      },
+    });
   }
 
   editar(o: Opportunity) {
