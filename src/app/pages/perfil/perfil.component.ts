@@ -3,15 +3,11 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { PerfilAlumno, PerfilService } from '../../services/perfil.service';
-
-type Cert = { titulo: string; anio: number; horas: number };
-type Exp = {
-  cargo: string;
-  desde: string;
-  hasta: string;
-  habilidades: string[];
-  tech: string[];
-};
+import {
+  PortafolioService,
+  Portafolio,
+  Evidencia,
+} from '../../services/portafolio.service';
 
 @Component({
   standalone: true,
@@ -23,7 +19,7 @@ type Exp = {
 export class PerfilComponent implements OnInit {
   originalPerfil!: PerfilAlumno;
 
-  // modelo editable
+  // modelo editable (datos del alumno)
   editable = {
     nombre: '',
     apellido: '',
@@ -34,59 +30,25 @@ export class PerfilComponent implements OnInit {
     ubicacion: '',
   };
 
-  // UI
+  // UI datos fijos
   colegio = 'Las Teresas';
   idiomas = ['Inglés', 'Portugués', 'Español', 'Italiano', 'Francés'];
   rolPrincipal = '';
 
+  // estados de perfil
   loading = false;
   saving = false;
   errorMsg: string | null = null;
   saveMsg: string | null = null;
   editMode = false;
 
-  // Certificados (no se tocan)
-  certificados: Cert[] = [
-    { titulo: 'AWS Data Science', anio: 2025, horas: 25 },
-    { titulo: 'Administración Empresarial', anio: 2024, horas: 40 },
-    { titulo: 'Tecnicatura en CSS', anio: 2023, horas: 90 },
-    { titulo: 'Machine Learning', anio: 2022, horas: 20 },
-  ];
+  // --------- NUEVO: portafolio + evidencias (solo lectura) ----------
+  portafolio: Portafolio | null = null;
+  evidencias: Evidencia[] = [];
+  loadingPortafolio = false;
+  loadingEvidencias = false;
 
-  // Experiencias (no se tocan)
-  experiencias: Exp[] = [
-    {
-      cargo: 'Artista independiente',
-      desde: 'Sep. 2023',
-      hasta: 'Ago. 2024',
-      habilidades: [
-        'IA generativa',
-        'Pagar impuestos y promocionarse en redes',
-      ],
-      tech: ['LLM'],
-    },
-    {
-      cargo: 'Analista de datos',
-      desde: 'Ago. 2022',
-      hasta: 'Sep. 2023',
-      habilidades: [
-        'Excel',
-        'Dar predicciones de ventas a clientes necesitados',
-      ],
-      tech: ['Visual Basic'],
-    },
-    {
-      cargo: 'Promotor de Colombo',
-      desde: 'Sep. 2021',
-      hasta: 'Ago. 2022',
-      habilidades: [
-        'Trato con clientes',
-        'Automatización de respuestas de WhatsApp',
-      ],
-      tech: ['Python'],
-    },
-  ];
-
+  // Sobre mí (lo dejamos igual)
   sobreMi: string[] = [
     'Persona proactiva con ganas de emprender y con habilidades en muchos campos, amante del arte que es programar.',
     'Me encantan los retos nuevos y conocer cada parte del software que voy a desarrollar, así como entregar una experiencia total a mis clientes.',
@@ -94,10 +56,14 @@ export class PerfilComponent implements OnInit {
     'Musulmán.',
   ];
 
-  constructor(private perfilService: PerfilService) {}
+  constructor(
+    private perfilService: PerfilService,
+    private portafolioService: PortafolioService
+  ) {}
 
   ngOnInit(): void {
     this.loading = true;
+    // perfil del alumno
     this.perfilService.getPerfilAlumno().subscribe({
       next: (perfil: PerfilAlumno) => {
         this.originalPerfil = perfil;
@@ -122,8 +88,12 @@ export class PerfilComponent implements OnInit {
         this.loading = false;
       },
     });
+
+    // portafolio + evidencias (independiente del perfil)
+    this.cargarPortafolio();
   }
 
+  // ---------- getters de perfil ----------
   get nombreCompleto(): string {
     return `${this.editable.nombre} ${this.editable.apellido}`.trim();
   }
@@ -132,6 +102,7 @@ export class PerfilComponent implements OnInit {
     return `${this.editable.semestre}`;
   }
 
+  // ---------- edición de perfil (se mantiene) ----------
   editarPerfil() {
     this.editMode = true;
     this.saveMsg = null;
@@ -143,7 +114,6 @@ export class PerfilComponent implements OnInit {
     this.errorMsg = null;
     this.saveMsg = null;
 
-    // reset a original
     if (this.originalPerfil) {
       this.editable = {
         nombre: this.originalPerfil.nombre,
@@ -180,7 +150,6 @@ export class PerfilComponent implements OnInit {
     this.saveMsg = null;
 
     if (!this.hayCambios()) {
-      // no llamar al backend si no hay cambios
       this.editMode = false;
       this.saveMsg = 'No hubo cambios en el perfil.';
       return;
@@ -214,7 +183,46 @@ export class PerfilComponent implements OnInit {
     });
   }
 
-  verCertificado(c: Cert) {
-    alert(`Ver detalles: ${c.titulo}`);
+  // --------- NUEVO: portafolio + evidencias (view only) ----------
+
+  private cargarPortafolio(): void {
+    this.loadingPortafolio = true;
+
+    this.portafolioService.getPortafolio().subscribe({
+      next: (p) => {
+        this.portafolio = p;
+        this.loadingPortafolio = false;
+        this.cargarEvidencias();
+      },
+      error: (err) => {
+        console.error('Error cargando portafolio en perfil', err);
+        // no piso errorMsg del perfil si ya estuviera; solo log visual de portafolio
+        if (!this.errorMsg) {
+          this.errorMsg = 'No se pudo cargar el portafolio.';
+        }
+        this.loadingPortafolio = false;
+      },
+    });
+  }
+
+  private cargarEvidencias(): void {
+    if (!this.portafolio) return;
+    this.loadingEvidencias = true;
+
+    this.portafolioService
+      .getEvidencias(this.portafolio.idPortafolio)
+      .subscribe({
+        next: (evs) => {
+          this.evidencias = evs;
+          this.loadingEvidencias = false;
+        },
+        error: (err) => {
+          console.error('Error cargando evidencias en perfil', err);
+          if (!this.errorMsg) {
+            this.errorMsg = 'No se pudieron cargar las evidencias.';
+          }
+          this.loadingEvidencias = false;
+        },
+      });
   }
 }

@@ -1,5 +1,6 @@
+<!-- src/app/pages/perfil/perfil.component.html -->
 <section class="perfil">
-  <!-- Header de perfil -->
+  <!-- Header de perfil (igual que antes) -->
   <div class="card info-card">
     <div class="info-grid">
       <div class="kvs">
@@ -61,7 +62,7 @@
           </span>
         </div>
 
-        <!-- Roles (solo lectura, no se edita) -->
+        <!-- Roles (solo lectura) -->
         <div class="kv">
           <span class="k">Roles</span>
           <span class="v">{{ rolPrincipal }}</span>
@@ -80,7 +81,7 @@
           </span>
         </div>
 
-        <!-- Ubicación (si querés mostrarla / editarla) -->
+        <!-- Ubicación -->
         <div class="kv">
           <span class="k">Ubicación</span>
           <span class="v" *ngIf="!editMode">{{ editable.ubicacion }}</span>
@@ -124,58 +125,78 @@
     <p class="msg error" *ngIf="errorMsg">{{ errorMsg }}</p>
   </div>
 
-  <!-- Grid principal: certificados / experiencias / sobre mí -->
+  <!-- Grid principal: Portafolio / Evidencias / Sobre mí -->
   <div class="grid-3">
-    <!-- Certificados -->
+    <!-- Resumen Portafolio (solo lectura) -->
     <section class="card panel">
       <header class="panel-header">
-        <h2>Certificados</h2>
+        <h2>Portafolio</h2>
       </header>
 
-      <ul class="cert-list">
-        <li class="cert-item" *ngFor="let c of certificados">
-          <div class="cert-left">
-            <strong>{{ c.titulo }}</strong>
-            <small>{{ c.anio }} · {{ c.horas }}hrs</small>
-          </div>
-          <div class="cert-right">
-            <button class="link" (click)="verCertificado(c)">
-              Ver detalles
-            </button>
-            <span class="chev">›</span>
-          </div>
-        </li>
-      </ul>
+      <ng-container *ngIf="!loadingPortafolio && portafolio; else loadingPort">
+        <p class="pf-label">Descripción</p>
+        <p class="pf-text">
+          {{ portafolio.descripcion || "Sin descripción aún." }}
+        </p>
+
+        <p class="pf-label">Skills</p>
+        <p class="pf-text">
+          {{ portafolio.skills || "Sin skills cargados." }}
+        </p>
+
+        <p class="pf-label">Visibilidad</p>
+        <p>
+          <span
+            class="pill-visibilidad"
+            [class.publico]="portafolio.visibilidad"
+          >
+            {{ portafolio.visibilidad ? "Visible para empresas" : "Privado" }}
+          </span>
+        </p>
+
+        <a
+          routerLink="/portafolio"
+          class="link-portafolio"
+          title="Ir a la pantalla de Portafolio"
+        >
+          Ver y editar portafolio →
+        </a>
+      </ng-container>
+
+      <ng-template #loadingPort>
+        <p class="pf-text">Cargando portafolio...</p>
+      </ng-template>
     </section>
 
-    <!-- Experiencias -->
+    <!-- Evidencias (solo lectura) -->
     <section class="card panel">
-      <header class="panel-header center">
-        <h2>Experiencias</h2>
-        <div class="cols-head">
-          <span>Experiencia · Duración</span>
-          <span>Habilidades aprendidas</span>
-          <span>Herramientas</span>
-        </div>
+      <header class="panel-header">
+        <h2>Evidencias</h2>
       </header>
 
-      <div class="exp-list">
-        <article class="exp-row" *ngFor="let e of experiencias">
-          <div class="exp-col exp-main">
-            <strong>{{ e.cargo }}</strong>
-            <small>{{ e.desde }} – {{ e.hasta }}</small>
-          </div>
-          <div class="exp-col exp-skills">
-            <span class="pill" *ngFor="let h of e.habilidades">{{ h }}</span>
-          </div>
-          <div class="exp-col exp-tech">
-            <span class="tag" *ngFor="let t of e.tech">{{ t }}</span>
-          </div>
-        </article>
+      <div class="lista-evidencias">
+        <ng-container
+          *ngIf="!loadingEvidencias && evidencias.length; else noEvidencias"
+        >
+          <article class="evidencia-card" *ngFor="let e of evidencias">
+            <header class="ev-header-main">
+              <h3>{{ e.titulo }}</h3>
+              <span class="chip" *ngIf="e.tipo">{{ e.tipo }}</span>
+            </header>
+            <p class="desc">{{ e.descripcion }}</p>
+            <p class="recurso" *ngIf="e.recurso">
+              Recurso: <span>{{ e.recurso }}</span>
+            </p>
+          </article>
+        </ng-container>
+
+        <ng-template #noEvidencias>
+          <p class="empty">Todavía no registraste evidencias.</p>
+        </ng-template>
       </div>
     </section>
 
-    <!-- Sobre mí -->
+    <!-- Sobre mí (igual que antes) -->
     <aside class="card panel">
       <header class="panel-header">
         <h2>Sobre mí</h2>

@@ -1,68 +1,293 @@
+<link
+  rel="stylesheet"
+  href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,100,0,0&icon_names=delete"
+/>
 <div class="portafolio-container">
   <section class="contenido">
-    <!-- Tabs -->
-    <div class="tabs">
-      <button
-        class="tab"
-        [class.active]="activeTab === 'aprobadas'"
-        (click)="activeTab = 'aprobadas'"
-      >
-        Aprobadas
-      </button>
-      <button
-        class="tab"
-        [class.active]="activeTab === 'pendientes'"
-        (click)="activeTab = 'pendientes'"
-      >
-        Pendientes
-      </button>
+    <!-- Panel de Portafolio -->
+    <div>
+      <div class="panel-header">
+        <h2>Mi Portafolio</h2>
+        <span
+          class="pill-visibilidad"
+          [class.publico]="portafolioEdit.visibilidad"
+        >
+          {{ portafolioEdit.visibilidad ? "Visible para empresas" : "Privado" }}
+        </span>
+      </div>
+
+      <div class="form-group">
+        <label for="descripcion">Descripción</label>
+        <textarea
+          id="descripcion"
+          rows="3"
+          [(ngModel)]="portafolioEdit.descripcion"
+          placeholder="Contá brevemente tu perfil, intereses y objetivos..."
+        ></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="skills">Skills</label>
+        <textarea
+          id="skills"
+          rows="2"
+          [(ngModel)]="portafolioEdit.skills"
+          placeholder="Ejemplo: Java, Python, Redes, Atención al cliente..."
+        ></textarea>
+      </div>
+
+      <div class="form-group inline">
+        <label class="toggle-label">
+          <input type="checkbox" [(ngModel)]="portafolioEdit.visibilidad" />
+          <span>Mostrar mi portafolio en búsquedas de empresas</span>
+        </label>
+      </div>
+
+      <div class="actions">
+        <button
+          class="btn btn-sm"
+          (click)="guardarPortafolio()"
+          [disabled]="savingPortafolio || !portafolioOriginal"
+        >
+          {{ savingPortafolio ? "Guardando..." : "Guardar cambios" }}
+        </button>
+      </div>
+
+      <p class="msg ok" *ngIf="successMsg">{{ successMsg }}</p>
+      <p class="msg error" *ngIf="errorMsg">{{ errorMsg }}</p>
     </div>
 
-    <!-- Contenido de pestañas -->
-    <ng-container *ngIf="activeTab === 'aprobadas'; else tabPendientes">
-      <div class="lista-certificados">
+    <!-- Panel de Evidencias -->
+    <div>
+      <!-- Tabs -->
+      <div class="tabs">
+        <button
+          class="tab"
+          [class.active]="activeTab === 'aprobadas'"
+          (click)="activeTab = 'aprobadas'"
+        >
+          Evidencias
+        </button>
+        <button
+          class="tab"
+          [class.active]="activeTab === 'pendientes'"
+          (click)="activeTab = 'pendientes'"
+        >
+          Pendientes
+        </button>
+      </div>
+
+      <!-- Contenido de pestañas -->
+      <ng-container *ngIf="activeTab === 'aprobadas'; else tabPendientes">
         <div class="panel-header">
-          <h2>Certificados Externos</h2>
+          <h2>Evidencias registradas</h2>
           <div class="actions">
-            <button class="btn btn-sm" (click)="cargarCertificadoExterno()">
-              Cargar certificado externo
+            <button class="btn btn-sm" (click)="toggleNuevaEvidencia()">
+              {{ showNewEvidence ? "Cancelar" : "Agregar evidencia" }}
             </button>
           </div>
         </div>
-        <app-certificado-card
-          *ngFor="let cert of certificados"
-          [data]="cert"
-        ></app-certificado-card>
-      </div>
 
-      <div class="lista-actividades">
-        <div class="panel-header">
-          <h2>Actividades Aprobadas (Vías UC)</h2>
+        <!-- Form nueva evidencia -->
+        <div class="new-evidence" *ngIf="showNewEvidence">
+          <div class="form-group">
+            <label for="ev-titulo">Título</label>
+            <input
+              id="ev-titulo"
+              type="text"
+              [(ngModel)]="newEvidence.titulo"
+              placeholder="Ej: Hackathon Vías UC 2024"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="ev-tipo">Tipo</label>
+            <input
+              id="ev-tipo"
+              type="text"
+              [(ngModel)]="newEvidence.tipo"
+              placeholder="Ej: actividad, certificado, voluntariado..."
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="ev-descripcion">Descripción</label>
+            <textarea
+              id="ev-descripcion"
+              rows="3"
+              [(ngModel)]="newEvidence.descripcion"
+              placeholder="Describí brevemente qué hiciste, qué aprendiste, etc."
+            ></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="ev-recurso">Recurso / enlace (opcional)</label>
+            <input
+              id="ev-recurso"
+              type="text"
+              [(ngModel)]="newEvidence.recurso"
+              placeholder="URL, referencia interna, etc."
+            />
+          </div>
+
+          <div class="actions">
+            <button
+              class="btn btn-sm"
+              (click)="guardarEvidencia()"
+              [disabled]="savingEvidencia"
+            >
+              {{ savingEvidencia ? "Guardando..." : "Guardar evidencia" }}
+            </button>
+          </div>
         </div>
-        <app-actividad-card
-          *ngFor="let act of actividades"
-          [data]="act"
-        ></app-actividad-card>
-      </div>
-    </ng-container>
+        <!-- Lista de evidencias -->
+        <div class="lista-evidencias">
+          <ng-container
+            *ngIf="!loadingEvidencias && evidencias.length; else sinEvidencias"
+          >
+            <article class="evidencia-card" *ngFor="let e of evidencias">
+              <header>
+                <div class="ev-header-main">
+                  <!-- título -->
+                  <h3 *ngIf="editingEvidenceId !== e.idEvidencia">
+                    {{ e.titulo }}
+                  </h3>
+                  <input
+                    *ngIf="editingEvidenceId === e.idEvidencia"
+                    type="text"
+                    class="inline-input"
+                    [(ngModel)]="editEvidenceModel.titulo"
+                    placeholder="Título"
+                  />
 
-    <ng-template #tabPendientes>
-      <div class="lista-pendientes">
-        <div class="panel-header">
-          <h2>Pendientes</h2>
+                  <!-- chip de tipo -->
+                  <span
+                    class="chip"
+                    *ngIf="editingEvidenceId !== e.idEvidencia && e.tipo"
+                  >
+                    {{ e.tipo }}
+                  </span>
+                  <span
+                    class="chip chip-edit"
+                    *ngIf="editingEvidenceId === e.idEvidencia"
+                  >
+                    <input
+                      type="text"
+                      class="inline-input small"
+                      [(ngModel)]="editEvidenceModel.tipo"
+                      placeholder="Tipo"
+                    />
+                  </span>
+                </div>
+
+                <div class="ev-actions">
+                  <!-- editar -->
+                  <button
+                    *ngIf="editingEvidenceId !== e.idEvidencia"
+                    class="ev-icon-btn"
+                    (click)="startEditarEvidencia(e)"
+                    title="Editar evidencia"
+                  >
+                    ✎
+                  </button>
+
+                  <!-- guardar / cancelar cuando se edita -->
+                  <button
+                    *ngIf="editingEvidenceId === e.idEvidencia"
+                    class="ev-icon-btn ok"
+                    [disabled]="savingEvidencia"
+                    (click)="guardarEdicionEvidencia()"
+                    title="Guardar cambios"
+                  >
+                    ✔
+                  </button>
+                  <button
+                    *ngIf="editingEvidenceId === e.idEvidencia"
+                    class="ev-icon-btn cancel"
+                    (click)="cancelarEditarEvidencia()"
+                    title="Cancelar edición"
+                  >
+                    ✖
+                  </button>
+
+                  <!-- eliminar -->
+                  <button
+                    class="ev-icon-btn danger"
+                    [disabled]="savingEvidencia"
+                    (click)="eliminarEvidencia(e)"
+                    title="Eliminar evidencia"
+                  >
+                    <span class="material-symbols-outlined"> delete </span>
+                  </button>
+                </div>
+              </header>
+
+              <!-- descripción -->
+              <p class="desc" *ngIf="editingEvidenceId !== e.idEvidencia">
+                {{ e.descripcion }}
+              </p>
+              <textarea
+                *ngIf="editingEvidenceId === e.idEvidencia"
+                rows="3"
+                [(ngModel)]="editEvidenceModel.descripcion"
+                class="inline-textarea"
+                placeholder="Descripción"
+              ></textarea>
+
+              <!-- recurso -->
+              <p
+                class="recurso"
+                *ngIf="editingEvidenceId !== e.idEvidencia && e.recurso"
+              >
+                Recurso: <span>{{ e.recurso }}</span>
+              </p>
+              <div
+                class="form-group"
+                *ngIf="editingEvidenceId === e.idEvidencia"
+              >
+                <label for="ev-recurso-edit-{{ e.idEvidencia }}"
+                  >Recurso / enlace</label
+                >
+                <input
+                  id="ev-recurso-edit-{{ e.idEvidencia }}"
+                  type="text"
+                  [(ngModel)]="editEvidenceModel.recurso"
+                  class="inline-input"
+                  placeholder="URL, referencia interna, etc."
+                />
+              </div>
+            </article>
+          </ng-container>
+
+          <ng-template #sinEvidencias>
+            <div class="empty" *ngIf="!loadingEvidencias">
+              Todavía no registraste evidencias.
+            </div>
+          </ng-template>
         </div>
+      </ng-container>
 
-        <ng-container *ngIf="pendientes?.length; else sinPendientes">
-          <app-pendiente-card
-            *ngFor="let p of pendientes"
-            [data]="p"
-          ></app-pendiente-card>
-        </ng-container>
+      <ng-template #tabPendientes>
+        <div class="lista-pendientes">
+          <div class="panel-header">
+            <h2>Pendientes</h2>
+          </div>
 
-        <ng-template #sinPendientes>
-          <div class="empty">No tienes elementos pendientes.</div>
-        </ng-template>
-      </div>
-    </ng-template>
+          <ng-container *ngIf="pendientes?.length; else sinPend">
+            <article class="evidencia-card" *ngFor="let p of pendientes">
+              <header>
+                <h3>{{ p.titulo }}</h3>
+                <span class="chip" *ngIf="p.tipo">{{ p.tipo }}</span>
+              </header>
+              <p class="desc">{{ p.descripcion }}</p>
+            </article>
+          </ng-container>
+
+          <ng-template #sinPend>
+            <div class="empty">No tienes elementos pendientes.</div>
+          </ng-template>
+        </div>
+      </ng-template>
+    </div>
   </section>
 </div>

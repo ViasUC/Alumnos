@@ -1,86 +1,120 @@
+// src/app/pages/canales/canales.component.ts
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-
-type Convenio = {
-  id: string;
-  entidad: string;
-  titulo: string;
-  descripcion: string;
-  inicio: string;
-  fin: string;
-};
+import {
+  CanalesService,
+  Canal,
+  CanalTipo,
+} from '../../services/canales.service';
 
 @Component({
-  selector: 'app-convenios',
   standalone: true,
+  selector: 'app-canales',
   imports: [CommonModule, FormsModule],
   templateUrl: './convenios.component.html',
-  styleUrl: './convenios.component.css',
+  styleUrls: ['./convenios.component.css'],
 })
-export class ConveniosComponent {
-  data: Convenio[] = [
-    {
-      id: 'c1',
-      entidad: 'Fundación UCA',
-      titulo: 'Convenio de Investigación aplicada',
-      descripcion:
-        'Líneas de investigación en IA educativa y análisis de datos académicos.',
-      inicio: '2025-10-01',
-      fin: '2026-12-31',
-    },
-    {
-      id: 'c2',
-      entidad: 'MentorMate',
-      titulo: 'Prácticas y Pasantías',
-      descripcion:
-        'Cupos de prácticas profesionales para estudiantes de ingeniería.',
-      inicio: '2025-12-15',
-      fin: '2026-06-30',
-    },
-    {
-      id: 'c3',
-      entidad: 'SODEP',
-      titulo: 'Residencia Profesional',
-      descripcion:
-        'Programa de residencia con rotaciones en equipos de producto.',
-      inicio: '2024-02-01',
-      fin: '2025-08-31',
-    },
+export class ConveniosComponent implements OnInit {
+  all: Canal[] = [];
+
+  tipos: CanalTipo[] = [
+    'OFERTAS',
+    'EVENTOS',
+    'INNOVACION',
+    'NOTICIAS_INSTITUCIONALES',
   ];
-  // Filtros
-  q = '';
-  onlyActive = false;
 
-  // Helpers de estado por vigencia
-  private toDate(s: string) {
-    return new Date(s + 'T00:00:00');
-  }
-  status(c: Convenio): 'Activo' | 'Próximo' | 'Expirado' {
-    const today = new Date();
-    const ini = this.toDate(c.inicio);
-    const fin = this.toDate(c.fin);
-    if (today < ini) return 'Próximo';
-    if (today > fin) return 'Expirado';
-    return 'Activo';
+  selectedTipo: CanalTipo | null = null;
+  search = '';
+
+  loading = false;
+  errorMsg: string | null = null;
+  followingIds = new Set<string>();
+
+  private userId: string | null = null;
+
+  constructor(private canalesSvc: CanalesService) {}
+
+  ngOnInit(): void {
+    this.userId = localStorage.getItem('userId'); // ya se guarda en login
+    this.cargarCanales();
   }
 
-  // Lista filtrada
-  get list(): Convenio[] {
-    const q = this.q.trim().toLowerCase();
-    return this.data.filter((c) => {
-      const match =
-        !q ||
-        c.entidad.toLowerCase().includes(q) ||
-        c.titulo.toLowerCase().includes(q) ||
-        c.descripcion.toLowerCase().includes(q);
-      const act = this.status(c) === 'Activo';
-      return match && (!this.onlyActive || act);
+  private cargarCanales(): void {
+    this.loading = true;
+    this.errorMsg = null;
+
+    this.canalesSvc.getCanalesActivos(this.userId).subscribe({
+      next: (canales) => {
+        this.all = canales;
+        this.loading = false;
+      },
+      error: (err) => {
+        console.error('Error cargando canales', err);
+        this.errorMsg = 'No se pudieron cargar los canales.';
+        this.loading = false;
+      },
     });
   }
 
-  ver(c: Convenio) {
-    // TODO: navegar a detalle o abrir modal
-    alert(`Ver convenio: ${c.titulo}`);
+  setTipo(tipo: CanalTipo | null): void {
+    this.selectedTipo = tipo;
+  }
+
+  isTipoSelected(tipo: CanalTipo): boolean {
+    return this.selectedTipo === tipo;
+  }
+
+  // listas derivadas: primero seguidos, después el resto
+  get followedList(): Canal[] {
+    return this.filtered().filter((c) => c.seguido);
+  }
+
+  get otherList(): Canal[] {
+    return this.filtered().filter((c) => !c.seguido);
+  }
+
+  private filtered(): Canal[] {
+    const q = this.search.trim().toLowerCase();
+    return this.all.filter((c) => {
+      const passTipo = !this.selectedTipo || c.tipo === this.selectedTipo;
+
+      const texto =
+        `${c.nombre} ${c.descripcion} ${c.slug} ${c.tipo}`.toLowerCase();
+
+      const passSearch = !q || texto.includes(q);
+      return passTipo && passSearch;
+    });
+  }
+
+  puedeSeguir(c: Canal): boolean {
+    if (!this.userId) return false;
+    if (c.seguido) return false;
+    if (this.followingIds.has(c.id)) return false;
+    return true;
+  }
+
+  seguir(c: Canal): void {
+    if (!this.userId || !this.puedeSeguir(c)) return;
+
+    this.followingIds.add(c.id);
+
+    this.canalesSvc.seguirCanal(c.id, this.userId).subscribe({
+      next: (ok) => {
+        if (ok) {
+          // marcar como seguido en la lista local
+          this.all = this.all.map((x) =>
+            x.id === c.id ? { ...x, seguido: true } : x
+          );
+        }
+        this.followingIds.delete(c.id);
+      },
+      error: (err) => {
+        console.error('Error al seguir canal', err);
+        this.followingIds.delete(c.id);
+        this.errorMsg = 'No se pudo seguir el canal. Intentá de nuevo.';
+      },
+    });
   }
 }

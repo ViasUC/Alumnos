@@ -85,7 +85,7 @@
   font-weight: 500;
 }
 
-/* ----- Grid 3 columnas: certificados | experiencias | sobre mí ----- */
+/* ----- Grid 3 columnas: Portafolio | Evidencias | Sobre mí ----- */
 .grid-3 {
   display: grid;
   grid-template-columns: 1.1fr 2fr 1fr;
@@ -99,116 +99,100 @@
   margin-bottom: 8px;
 }
 
-.panel-header.center h2 {
-  text-align: center;
-}
-
 .panel-header h2 {
   margin: 0;
   font-weight: 700;
 }
 
-.cols-head {
-  display: grid;
-  grid-template-columns: 1.2fr 1.4fr .8fr;
-  font-size: .92rem;
-  opacity: .8;
-  border-top: 1px solid rgba(0, 0, 0, .08);
-  padding-top: 8px;
+/* ----- Portafolio resumen ----- */
+.pf-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  opacity: 0.8;
+  margin-bottom: 2px;
 }
 
-/* ----- Certificados (lista scrollable) ----- */
-.cert-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  max-height: 340px;
-  overflow: auto;
-  display: grid;
-  gap: 10px;
+.pf-text {
+  font-size: 0.9rem;
+  margin: 0 0 8px 0;
 }
 
-.cert-item {
-  background: var(--surface-2);
+.pill-visibilidad {
+  padding: 4px 10px;
+  border-radius: 999px;
   border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 10px 12px;
-  display: grid;
-  grid-template-columns: 1fr auto;
-  align-items: center;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, .06);
+  font-size: 0.8rem;
 }
 
-.cert-left strong {
-  display: block;
+.pill-visibilidad.publico {
+  background: rgba(16, 185, 129, 0.1);
+  border-color: #10b981;
 }
 
-.cert-left small {
-  opacity: .8;
-}
-
-.cert-right {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.cert-right .link {
-  background: transparent;
-  border: none;
-  color: inherit;
+.link-portafolio {
+  display: inline-block;
+  margin-top: 8px;
+  font-size: 0.86rem;
   text-decoration: underline;
   cursor: pointer;
-  padding: 0;
 }
 
-.chev {
-  font-size: 1.2rem;
-  opacity: .6;
+/* ----- Evidencias (solo lectura) ----- */
+.lista-evidencias {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
-/* ----- Experiencias ----- */
-.exp-list {
-  max-height: 420px;
-  overflow: auto;
-  display: grid;
-  gap: 12px;
-}
-
-.exp-row {
-  background: var(--surface-2);
+.evidencia-card {
+  border-radius: 12px;
   border: 1px solid var(--border);
+  padding: 10px 12px;
+  background: var(--surface-2);
+}
+
+.ev-header-main {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.evidencia-card h3 {
+  margin: 0;
+  font-size: 0.98rem;
+}
+
+.chip {
+  padding: 2px 8px;
+  font-size: 0.75rem;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  opacity: 0.9;
+}
+
+.desc {
+  margin: 4px 0 4px 0;
+  font-size: 0.88rem;
+}
+
+.recurso {
+  margin: 0;
+  font-size: 0.8rem;
+  opacity: 0.9;
+}
+
+.recurso span {
+  font-weight: 600;
+}
+
+.empty {
+  opacity: 0.8;
+  border: 1px dashed var(--border);
   border-radius: 12px;
   padding: 12px;
-  display: grid;
-  grid-template-columns: 1.2fr 1.4fr .8fr;
-  gap: 12px;
-  align-items: start;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, .06);
-}
-
-.exp-main strong {
-  display: block;
-}
-
-.exp-main small {
-  opacity: .75;
-}
-
-.pill,
-.tag {
-  display: inline-block;
-  padding: 6px 10px;
-  border-radius: 999px;
-  font-size: .9rem;
-  margin: 4px 6px 0 0;
-  background: var(--muted-bg);
-  border: 1px solid var(--border);
-}
-
-.tag {
-  font-weight: 700;
-  background: color-mix(in srgb, var(--accent), transparent 78%);
+  font-size: 0.9rem;
 }
 
 /* ----- Sobre mí ----- */
@@ -219,15 +203,11 @@
   overflow: auto;
 }
 
-/* ----- Scrollbar (webkit) opcional ----- */
-.cert-list::-webkit-scrollbar,
-.exp-list::-webkit-scrollbar,
+/* ----- Scrollbar opcional ----- */
 .about::-webkit-scrollbar {
   width: 10px;
 }
 
-.cert-list::-webkit-scrollbar-thumb,
-.exp-list::-webkit-scrollbar-thumb,
 .about::-webkit-scrollbar-thumb {
   background: color-mix(in srgb, var(--accent), transparent 70%);
   border-radius: 10px;
@@ -236,11 +216,6 @@
 /* ----- Responsivo ----- */
 @media (max-width: 1200px) {
   .grid-3 {
-    grid-template-columns: 1fr;
-  }
-
-  .cols-head,
-  .exp-row {
     grid-template-columns: 1fr;
   }
 }

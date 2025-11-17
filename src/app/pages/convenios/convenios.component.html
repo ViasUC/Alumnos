@@ -1,64 +1,92 @@
-<section class="convenios card">
-  <header class="panel-header">
-    <h1>Convenios</h1>
+<section class="channels">
+  <!-- Filtros -->
+  <aside class="filters card">
+    <h2 class="filters-title">Canales</h2>
 
-    <div class="filters">
-      <label class="search">
-        <span class="icon">🔎</span>
-        <input
-          type="text"
-          [(ngModel)]="q"
-          placeholder="Buscar por entidad, título o descripción..."
-          aria-label="Buscar convenio"
-        />
-      </label>
-
-      <label class="only">
-        <input type="checkbox" [(ngModel)]="onlyActive" />
-        <span>Solo activos</span>
-      </label>
+    <div class="search">
+      <span class="icon">🔎</span>
+      <input
+        type="text"
+        [(ngModel)]="search"
+        placeholder="Buscar por nombre, tipo o descripción..."
+        aria-label="Buscar canal"
+      />
     </div>
-  </header>
 
-  <div class="grid">
-    <article
-      class="c-card"
-      *ngFor="let c of list"
-      [class.active]="status(c) === 'Activo'"
-      [class.soon]="status(c) === 'Próximo'"
-      [class.expired]="status(c) === 'Expirado'"
-    >
-      <div class="c-head">
-        <span class="entidad">{{ c.entidad }}</span>
-        <span
-          class="status"
-          [class.ok]="status(c) === 'Activo'"
-          [class.soon]="status(c) === 'Próximo'"
-          [class.bad]="status(c) === 'Expirado'"
-        >
-          {{ status(c) }}
-        </span>
-      </div>
+    <div class="filters-group">
+      <p class="filters-subtitle">Tipo de canal</p>
+      <button
+        class="filters-kind"
+        [class.active]="selectedTipo === null"
+        (click)="setTipo(null)"
+      >
+        Todos
+      </button>
 
-      <h3 class="title">{{ c.titulo }}</h3>
-      <p class="desc">{{ c.descripcion }}</p>
+      <button
+        class="filters-kind"
+        *ngFor="let t of tipos"
+        [class.active]="isTipoSelected(t)"
+        (click)="setTipo(t)"
+      >
+        {{ t }}
+      </button>
+    </div>
+  </aside>
 
-      <div class="meta">
-        <div class="kv">
-          <span class="k">Inicio</span>
-          <span class="v">{{ c.inicio | date : "dd/MM/yyyy" }}</span>
+  <!-- Contenido principal -->
+  <section class="content card">
+    <header class="content-header">
+      <h1>CANALES</h1>
+    </header>
+
+    <p *ngIf="loading">Cargando canales...</p>
+    <p class="error" *ngIf="!loading && errorMsg">{{ errorMsg }}</p>
+
+    <ng-container *ngIf="!loading && !errorMsg">
+      <!-- Tus canales -->
+      <section *ngIf="followedList.length" class="section-block">
+        <h2 class="section-title">Tus canales</h2>
+        <div class="grid">
+          <article class="channel-card followed" *ngFor="let c of followedList">
+            <header class="card-header">
+              <span class="pill tipo">{{ c.tipo }}</span>
+              <h3>{{ c.nombre }}</h3>
+            </header>
+            <p class="desc">{{ c.descripcion }}</p>
+            <p class="slug">/{{ c.slug }}</p>
+            <button class="btn-sm ghost" disabled>Siguiendo</button>
+          </article>
         </div>
-        <div class="kv">
-          <span class="k">Fin</span>
-          <span class="v">{{ c.fin | date : "dd/MM/yyyy" }}</span>
+      </section>
+
+      <!-- Otros canales -->
+      <section class="section-block">
+        <h2 class="section-title">
+          {{ followedList.length ? "Otros canales" : "Canales disponibles" }}
+        </h2>
+        <div class="grid">
+          <article class="channel-card" *ngFor="let c of otherList">
+            <header class="card-header">
+              <span class="pill tipo">{{ c.tipo }}</span>
+              <h3>{{ c.nombre }}</h3>
+            </header>
+            <p class="desc">{{ c.descripcion }}</p>
+            <p class="slug">/{{ c.slug }}</p>
+            <button
+              class="btn-sm primary"
+              [disabled]="!puedeSeguir(c)"
+              (click)="seguir(c)"
+            >
+              {{ followingIds.has(c.id) ? "Siguiendo..." : "Seguir canal" }}
+            </button>
+          </article>
         </div>
-      </div>
 
-      <div class="cta">
-        <button class="btn btn-sm" (click)="ver(c)">Ver</button>
-      </div>
-    </article>
-  </div>
-
-  <div class="empty" *ngIf="!list.length">No se encontraron convenios.</div>
+        <p class="empty" *ngIf="!otherList.length && !followedList.length">
+          No hay canales para mostrar con los filtros actuales.
+        </p>
+      </section>
+    </ng-container>
+  </section>
 </section>
