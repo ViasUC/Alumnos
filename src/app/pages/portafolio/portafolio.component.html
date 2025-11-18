@@ -73,7 +73,7 @@
           [class.active]="activeTab === 'pendientes'"
           (click)="activeTab = 'pendientes'"
         >
-          Pendientes
+          Endorsement
         </button>
       </div>
 
@@ -270,7 +270,7 @@
       <ng-template #tabPendientes>
         <div class="lista-pendientes">
           <div class="panel-header">
-            <h2>Pendientes</h2>
+            <h2>Endorsement</h2>
           </div>
 
           <ng-container *ngIf="pendientes?.length; else sinPend">
@@ -284,7 +284,7 @@
           </ng-container>
 
           <ng-template #sinPend>
-            <div class="empty">No tienes elementos pendientes.</div>
+            <div class="empty">No tienes endorsement.</div>
           </ng-template>
         </div>
       </ng-template>

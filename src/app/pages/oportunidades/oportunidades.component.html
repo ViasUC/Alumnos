@@ -93,7 +93,6 @@
 
         <div class="opp-body">
           <div class="info">
-            <!-- debajo podemos usar modalidad como subtítulo -->
             <strong class="title">
               {{ o.modalidad }}
               <ng-container *ngIf="o.empresa"> · {{ o.empresa }} </ng-container>
@@ -107,31 +106,36 @@
             <small class="meta">
               Cierra: {{ o.fechaCierre | date : "dd/MM/yyyy HH:mm" }}
             </small>
+
+            <small class="meta" *ngIf="o.aplicado">
+              Ya estás postulado a esta oportunidad.
+            </small>
           </div>
 
-          <!-- dentro del *ngFor, solo cambio el botón -->
           <div class="cta">
             <button
               class="btn"
-              [disabled]="isApplying(o)"
+              [disabled]="!canApply(o)"
               (click)="inscribirse(o)"
             >
-              {{ isApplying(o) ? "Postulando..." : "Inscribirse" }}
+              <ng-container *ngIf="o.aplicado; else notApplied">
+                Ya postulado
+              </ng-container>
+              <ng-template #notApplied>
+                {{ isApplying(o) ? "Postulando..." : "Inscribirse" }}
+              </ng-template>
             </button>
           </div>
         </div>
       </article>
     </div>
 
+    <p class="ok" *ngIf="applyMsg">
+      {{ applyMsg }}
+    </p>
+
     <p class="error" *ngIf="errorMsg">
       {{ errorMsg }}
     </p>
   </section>
 </section>
-<p class="ok" *ngIf="applyMsg">
-  {{ applyMsg }}
-</p>
-
-<p class="error" *ngIf="errorMsg">
-  {{ errorMsg }}
-</p>

@@ -331,3 +331,8 @@
   margin-top: 8px;
   font-size: 0.9rem;
 }
+
+.btn[disabled] {
+  opacity: 0.6;
+  cursor: default;
+}

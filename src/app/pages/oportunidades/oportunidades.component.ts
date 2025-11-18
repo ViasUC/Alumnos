@@ -7,6 +7,7 @@ import {
   Opportunity,
   OportunidadesService,
 } from '../../services/oportunidades.service';
+import { PostulacionesService } from '../../services/postulacion.service';
 
 type ViewMode = 'oportunidades' | 'bolsa';
 
@@ -34,7 +35,7 @@ export class OportunidadesComponent implements OnInit {
   selectedKind: Kind | null = null;
 
   modalidades: string[] = [];
-  selectedModalidades = new Set<string>();
+  selectedModalidades = new Set<string>(); // modalidad en minúsculas
 
   careerPalette = [
     '#4f46e5',
@@ -48,29 +49,50 @@ export class OportunidadesComponent implements OnInit {
   loading = false;
   errorMsg: string | null = null;
 
-  // nuevo: feedback de postulación
+  // postulación
   applyMsg: string | null = null;
-  applyingIds = new Set<string>(); // ids en los que se está postulando
+  applyingIds = new Set<string>(); // ids que están en proceso de postulación
+  private userId: string | null = null;
 
-  constructor(private oportunidadesSvc: OportunidadesService) {}
+  constructor(
+    private oportunidadesSvc: OportunidadesService,
+    private postulacionesSvc: PostulacionesService
+  ) {}
 
   ngOnInit(): void {
     this.loading = true;
+    this.userId = localStorage.getItem('userId');
+
+    // 1) traer todas las oportunidades
     this.oportunidadesSvc.getAllOportunities().subscribe({
       next: (ops) => {
-        this.all = ops;
-
-        const set = new Map<string, string>();
-        for (const o of ops) {
-          const key = (o.modalidad ?? '').trim().toLowerCase();
-          if (key && !set.has(key)) set.set(key, o.modalidad);
+        // si no hay usuario logueado, no podemos marcar aplicados
+        if (!this.userId) {
+          this.initModalidades(ops);
+          this.all = ops.map((o) => ({ ...o, aplicado: false }));
+          this.loading = false;
+          return;
         }
-        this.modalidades = Array.from(set.values());
-        this.selectedModalidades = new Set(
-          this.modalidades.map((m) => m.toLowerCase())
-        );
 
-        this.loading = false;
+        // 2) traer postulaciones del alumno y marcar aplicados
+        this.postulacionesSvc.getPostulacionesAlumno(this.userId).subscribe({
+          next: (ids) => {
+            const appliedSet = new Set(ids);
+            this.initModalidades(ops);
+            this.all = ops.map((o) => ({
+              ...o,
+              aplicado: appliedSet.has(o.id),
+            }));
+            this.loading = false;
+          },
+          error: (err) => {
+            console.error('Error cargando postulaciones del alumno', err);
+            // si falla, seguimos pero sin marcado de aplicados
+            this.initModalidades(ops);
+            this.all = ops.map((o) => ({ ...o, aplicado: false }));
+            this.loading = false;
+          },
+        });
       },
       error: (err) => {
         console.error('Error cargando oportunidades', err);
@@ -80,10 +102,23 @@ export class OportunidadesComponent implements OnInit {
     });
   }
 
+  private initModalidades(ops: Opportunity[]): void {
+    const set = new Map<string, string>();
+    for (const o of ops) {
+      const key = (o.modalidad ?? '').trim().toLowerCase();
+      if (key && !set.has(key)) set.set(key, o.modalidad);
+    }
+    this.modalidades = Array.from(set.values());
+    this.selectedModalidades = new Set(
+      this.modalidades.map((m) => m.toLowerCase())
+    );
+  }
+
+  // cambiar entre F2/F3 y F4
   setViewMode(mode: ViewMode) {
     this.viewMode = mode;
-    // reset de mensaje cuando cambiás de pestaña
     this.applyMsg = null;
+    this.errorMsg = null;
   }
 
   isModalidadSelected(m: string): boolean {
@@ -110,6 +145,7 @@ export class OportunidadesComponent implements OnInit {
     return this.careerPalette[i % this.careerPalette.length];
   }
 
+  // lista filtrada y búsqueda case-insensitive
   get list(): Opportunity[] {
     const q = this.search.trim().toLowerCase();
 
@@ -142,28 +178,38 @@ export class OportunidadesComponent implements OnInit {
     });
   }
 
-  // botón deshabilitado mientras se postula
   isApplying(o: Opportunity): boolean {
     return this.applyingIds.has(o.id);
+  }
+
+  // no se puede postular si ya está aplicado
+  canApply(o: Opportunity): boolean {
+    if (o.aplicado) return false;
+    if (this.isApplying(o)) return false;
+    return true;
   }
 
   inscribirse(o: Opportunity) {
     this.applyMsg = null;
     this.errorMsg = null;
 
-    const alumnoId = localStorage.getItem('userId');
+    const alumnoId = this.userId ?? localStorage.getItem('userId');
     if (!alumnoId) {
       this.errorMsg = 'Debés iniciar sesión para postularte.';
       return;
     }
 
-    if (this.isApplying(o)) return;
+    if (!this.canApply(o)) return;
 
     this.applyingIds.add(o.id);
 
     this.oportunidadesSvc.crearPostulacion(o.id, alumnoId).subscribe({
       next: (resp) => {
         this.applyingIds.delete(o.id);
+        // marcar como aplicado en la lista completa
+        this.all = this.all.map((x) =>
+          x.id === o.id ? { ...x, aplicado: true } : x
+        );
         this.applyMsg = `Te postulaste a "${o.title}" (estado: ${resp.estado}).`;
       },
       error: (err) => {

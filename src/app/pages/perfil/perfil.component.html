@@ -196,13 +196,53 @@
       </div>
     </section>
 
-    <!-- Sobre mí (igual que antes) -->
+    <!-- Endorsement -->
     <aside class="card panel">
       <header class="panel-header">
-        <h2>Sobre mí</h2>
+        <h2>Endorsement</h2>
+        <p class="endorsement-subtitle">
+          Comentarios y validaciones que recibiste sobre tus skills.
+        </p>
       </header>
-      <div class="about">
-        <p *ngFor="let p of sobreMi">{{ p }}</p>
+
+      <div class="about endorsements">
+        <ng-container *ngIf="!loadingEndorsements; else loadingEndorse">
+          <ng-container *ngIf="endorsements.length; else noEndorsements">
+            <article class="endorsement-card" *ngFor="let e of endorsements">
+              <header class="endorsement-header">
+                <span class="skill-pill">
+                  {{ e.skill || "Skill sin nombre" }}
+                </span>
+                <span
+                  class="status-pill"
+                  [ngClass]="'status-' + (e.status || '').toLowerCase()"
+                >
+                  {{ e.status }}
+                </span>
+              </header>
+
+              <p class="endorsement-message">
+                “{{ e.message || "Sin mensaje proporcionado." }}”
+              </p>
+
+              <p class="endorsement-from">
+                Endorsed by usuario #{{ e.fromUserId }}
+              </p>
+            </article>
+          </ng-container>
+
+          <ng-template #noEndorsements>
+            <p class="empty">Todavía no recibiste endorsements.</p>
+          </ng-template>
+
+          <p class="msg error" *ngIf="endorsementsError">
+            {{ endorsementsError }}
+          </p>
+        </ng-container>
+
+        <ng-template #loadingEndorse>
+          <p class="pf-text">Cargando endorsements...</p>
+        </ng-template>
       </div>
     </aside>
   </div>

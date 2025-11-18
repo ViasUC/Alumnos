@@ -8,6 +8,11 @@ import {
   Portafolio,
   Evidencia,
 } from '../../services/portafolio.service';
+import {
+  Endorsement,
+  EndorsementsService,
+} from '../../services/endorsement.service';
+import { GeneralService } from '../../services/general.service';
 
 @Component({
   standalone: true,
@@ -42,23 +47,22 @@ export class PerfilComponent implements OnInit {
   saveMsg: string | null = null;
   editMode = false;
 
-  // --------- NUEVO: portafolio + evidencias (solo lectura) ----------
+  // --------- portafolio + evidencias (solo lectura) ----------
   portafolio: Portafolio | null = null;
   evidencias: Evidencia[] = [];
   loadingPortafolio = false;
   loadingEvidencias = false;
 
-  // Sobre mí (lo dejamos igual)
-  sobreMi: string[] = [
-    'Persona proactiva con ganas de emprender y con habilidades en muchos campos, amante del arte que es programar.',
-    'Me encantan los retos nuevos y conocer cada parte del software que voy a desarrollar, así como entregar una experiencia total a mis clientes.',
-    'Los martes y domingos son de estudio intenso con objetivos claros.',
-    'Musulmán.',
-  ];
+  // --------- ENDORSEMENTS ----------
+  endorsements: Endorsement[] = [];
+  loadingEndorsements = false;
+  endorsementsError: string | null = null;
 
   constructor(
     private perfilService: PerfilService,
-    private portafolioService: PortafolioService
+    private portafolioService: PortafolioService,
+    private endorsementsService: EndorsementsService,
+    private generalService: GeneralService
   ) {}
 
   ngOnInit(): void {
@@ -91,6 +95,9 @@ export class PerfilComponent implements OnInit {
 
     // portafolio + evidencias (independiente del perfil)
     this.cargarPortafolio();
+
+    // endorsements recibidos
+    this.cargarEndorsements();
   }
 
   // ---------- getters de perfil ----------
@@ -102,7 +109,7 @@ export class PerfilComponent implements OnInit {
     return `${this.editable.semestre}`;
   }
 
-  // ---------- edición de perfil (se mantiene) ----------
+  // ---------- edición de perfil ----------
   editarPerfil() {
     this.editMode = true;
     this.saveMsg = null;
@@ -183,7 +190,7 @@ export class PerfilComponent implements OnInit {
     });
   }
 
-  // --------- NUEVO: portafolio + evidencias (view only) ----------
+  // --------- Portafolio + evidencias ----------
 
   private cargarPortafolio(): void {
     this.loadingPortafolio = true;
@@ -196,7 +203,6 @@ export class PerfilComponent implements OnInit {
       },
       error: (err) => {
         console.error('Error cargando portafolio en perfil', err);
-        // no piso errorMsg del perfil si ya estuviera; solo log visual de portafolio
         if (!this.errorMsg) {
           this.errorMsg = 'No se pudo cargar el portafolio.';
         }
@@ -224,5 +230,37 @@ export class PerfilComponent implements OnInit {
           this.loadingEvidencias = false;
         },
       });
+  }
+
+  // --------- Endorsements recibidos ----------
+
+  private cargarEndorsements(): void {
+    const rawUserId = this.generalService.getUserId();
+    if (!rawUserId) {
+      this.endorsementsError = 'No se encontró el usuario logueado.';
+      return;
+    }
+
+    const userId = Number(rawUserId);
+    if (Number.isNaN(userId)) {
+      this.endorsementsError = 'El ID de usuario guardado es inválido.';
+      return;
+    }
+
+    this.loadingEndorsements = true;
+    this.endorsementsError = null;
+
+    this.endorsementsService.getEndorsementsForUser(userId).subscribe({
+      next: (list) => {
+        this.endorsements = list;
+        this.loadingEndorsements = false;
+      },
+      error: (err) => {
+        console.error('Error cargando endorsements', err);
+        this.loadingEndorsements = false;
+        this.endorsementsError =
+          'No se pudieron cargar los endorsements recibidos.';
+      },
+    });
   }
 }

@@ -54,6 +54,7 @@ export interface Opportunity {
   origin: Origin;
   empresa?: string | null;
   ubicacion?: string | null;
+  aplicado?: boolean; // true si ya tiene postulación
 }
 
 export interface PostulacionResp {
