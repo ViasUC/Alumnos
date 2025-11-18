@@ -1,6 +1,6 @@
 {
   "/graphql": {
-    "target": "http://localhost:8080",
+    "target": "http://viasuc-backend-env.eba-hehvb97f.us-east-2.elasticbeanstalk.com/",
     "secure": false,
     "changeOrigin": true,
     "logLevel": "debug"

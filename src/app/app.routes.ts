@@ -7,6 +7,13 @@ import { PerfilComponent } from './pages/perfil/perfil.component';
 import { LoginComponent } from './pages/login/login.component';
 
 export const routes: Routes = [
+  // Ruta por defecto: cuando entra a '/'
+  {
+    path: '',
+    redirectTo: 'login',
+    pathMatch: 'full',
+  },
+
   {
     path: 'login',
     component: LoginComponent,
@@ -19,7 +26,9 @@ export const routes: Routes = [
       { path: 'oportunidades', component: OportunidadesComponent },
       { path: 'perfil', component: PerfilComponent },
       { path: 'convenios', component: ConveniosComponent },
-      { path: '**', redirectTo: 'portafolio' },
     ],
   },
+
+  // opcional: cualquier ruta desconocida va a login
+  // { path: '**', redirectTo: 'login' },
 ];
