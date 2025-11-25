@@ -9,7 +9,7 @@ import {
 } from '../../services/oportunidades.service';
 import { PostulacionesService } from '../../services/postulacion.service';
 
-type ViewMode = 'oportunidades' | 'bolsa';
+type ViewMode = 'oportunidades' | 'bolsa' | 'cursos';
 
 @Component({
   standalone: true,
